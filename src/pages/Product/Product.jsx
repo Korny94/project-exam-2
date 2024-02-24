@@ -5,8 +5,8 @@ const StyledDiv = styled.div`
   font-size: 2rem;
 `;
 
-function Home() {
-  return <StyledDiv>Home</StyledDiv>;
+function Product() {
+  return <StyledDiv>Product</StyledDiv>;
 }
 
-export default Home;
+export default Product;

@@ -5,8 +5,8 @@ const StyledDiv = styled.div`
   font-size: 2rem;
 `;
 
-function Home() {
-  return <StyledDiv>Home</StyledDiv>;
+function Cart() {
+  return <StyledDiv>Shopping Cart</StyledDiv>;
 }
 
-export default Home;
+export default Cart;
