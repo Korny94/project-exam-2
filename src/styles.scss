@@ -8,8 +8,31 @@ a {
   color: white;
 }
 
+nav {
+  display: flex;
+  gap: 1rem;
+}
+
 .logo {
-  width: 40px;
-  height: 40px;
-  margin-right: 0.5rem;
+  width: 35px;
+  height: 35px;
+  margin: 0.3rem 0;
+  margin-top: 0.7rem;
+}
+
+.navIcon {
+  width: 30px;
+  height: 30px;
+}
+
+@media screen and (max-width: 768px) {
+  .logo {
+    width: 25px;
+    height: 25px;
+  }
+
+  .navIcon {
+    width: 20px;
+    height: 20px;
+  }
 }
