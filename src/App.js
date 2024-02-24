@@ -1,63 +1,22 @@
 import "./App.css";
-import { Routes, Route, Link } from "react-router-dom";
-
-function Header() {
-  return (
-    <header>
-      <Nav />
-    </header>
-  );
-}
-
-function Nav() {
-  return (
-    <nav>
-      <ul>
-        <li>
-          <Link to="/">Home</Link>
-        </li>
-        <li>
-          <Link to="/products">Products</Link>
-        </li>
-        <li>
-          <Link to="/contact">Contact</Link>
-        </li>
-      </ul>
-    </nav>
-  );
-}
-
-function Home() {
-  return <div>Home</div>;
-}
-
-function Products() {
-  return <div>Products</div>;
-}
-
-function Contact() {
-  return <div>Contact</div>;
-}
-
-function RouteNotFound() {
-  return <div>Route not found</div>;
-}
-
-function Footer() {
-  return <footer>Footer</footer>;
-}
+import { Routes, Route } from "react-router-dom";
+import Home from "./pages/Home/Home.jsx";
+import Contact from "./pages/Contact/Contact.jsx";
+import Products from "./pages/Products/Products.jsx";
+import RouteNotFound from "./pages/RouteNotFound/RouteNotFound.jsx";
+import Layout from "./Components/Layouts/Layout.jsx";
 
 function App() {
   return (
     <div className="App">
-      <Header />
       <Routes>
-        <Route index element={<Home />} />
-        <Route path="products" element={<Products />} />
-        <Route path="contact" element={<Contact />} />
-        <Route path="*" element={<RouteNotFound />} />
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Home />} />
+          <Route path="products" element={<Products />} />
+          <Route path="contact" element={<Contact />} />
+          <Route path="*" element={<RouteNotFound />} />
+        </Route>
       </Routes>
-      <Footer />
     </div>
   );
 }
