@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import React, { useState, useEffect } from "react";
 
 const StyledFooter = styled.footer`
   position: absolute;
@@ -10,7 +11,19 @@ const StyledFooter = styled.footer`
 `;
 
 function Footer() {
-  return <StyledFooter>Footer</StyledFooter>;
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const newYear = new Date().getFullYear();
+      if (newYear !== currentYear) {
+        setCurrentYear(newYear);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [currentYear]);
+  return <StyledFooter>© {currentYear}</StyledFooter>;
 }
 
 export default Footer;

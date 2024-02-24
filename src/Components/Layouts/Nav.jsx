@@ -42,7 +42,7 @@ const StyledNavItems = styled.div`
 const StyledNav = styled.nav`
   display: flex;
   justify-content: space-around;
-  padding: 1rem;
+  padding: 2rem 1rem 1rem 1rem;
 `;
 
 function Nav() {
