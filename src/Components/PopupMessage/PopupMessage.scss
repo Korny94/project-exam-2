@@ -15,3 +15,31 @@
   animation: slideIn 0.5s ease forwards, bounce 0.5s ease-in-out 0.5s forwards,
     slideOut 0.5s ease forwards 3s; /* Slide in, bounce, and slide out animations */
 }
+
+@keyframes slideIn {
+  from {
+    top: -100px;
+  } /* Start from above the viewport */
+  to {
+    top: 2rem;
+  } /* Move to top of viewport */
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    top: 2rem;
+  } /* Start and end position */
+  50% {
+    top: 1.5rem;
+  } /* Bounce up */
+}
+
+@keyframes slideOut {
+  from {
+    top: 2;
+  } /* Start from top of viewport */
+  to {
+    top: -100px;
+  } /* Move back above the viewport */
+}

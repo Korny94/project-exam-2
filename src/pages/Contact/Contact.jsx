@@ -53,7 +53,9 @@ function Contact() {
 
     // Loop through each element and reset the border style
     formElements.forEach((element) => {
-      element.style.border = "1px solid #414141";
+      if (element.id !== "search") {
+        element.style.border = "1px solid #414141";
+      }
     });
   }
 
@@ -96,7 +98,7 @@ function Contact() {
     setShowPopupMessage(true);
     setTimeout(() => {
       setShowPopupMessage(false);
-    }, 3000);
+    }, 5000);
   };
 
   function validateName(e) {
