@@ -2,7 +2,8 @@ import styled from "styled-components";
 import React, { useState, useEffect } from "react";
 
 const StyledFooter = styled.footer`
-  position: absolute;
+  position: fixed;
+  background-color: #212121;
   bottom: 0;
   width: 100%;
   text-align: center;

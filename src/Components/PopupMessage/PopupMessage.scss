@@ -1,0 +1,17 @@
+.popupMessage {
+  position: fixed;
+  font-size: 1.25rem;
+  text-wrap: nowrap;
+  font-weight: 900;
+  top: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  background-image: linear-gradient(to right, #1f4c65, #317093);
+  color: #fff;
+  padding: 1rem 40px;
+  border-radius: 20px;
+  z-index: 99999999999999999999999;
+  animation: slideIn 0.5s ease forwards, bounce 0.5s ease-in-out 0.5s forwards,
+    slideOut 0.5s ease forwards 3s; /* Slide in, bounce, and slide out animations */
+}

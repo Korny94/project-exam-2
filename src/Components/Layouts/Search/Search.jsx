@@ -8,7 +8,7 @@ function Search() {
           className="input"
           type="text"
           required=""
-          placeholder="Search products.."
+          placeholder="Search.."
           id="search"
         />
         <div className="fancy-bg"></div>

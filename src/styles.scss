@@ -1,6 +1,23 @@
+html::-webkit-scrollbar,
+html *::-webkit-scrollbar {
+  height: 10px;
+}
+
+html::-webkit-scrollbar-thumb,
+html *::-webkit-scrollbar-thumb {
+  background-color: #94949c6e;
+  border-radius: 4px;
+}
+
 .App {
-  min-height: 100svh;
   background: #212121;
+  min-height: 100vh;
+  overflow-y: scroll;
+  margin-bottom: 1rem;
+}
+
+.App * {
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 a {
@@ -13,23 +30,16 @@ nav {
   gap: 0.5rem;
 }
 
-.logo {
-  width: 25px;
-  height: 25px;
-  margin: 0.3rem 0;
-  margin-top: 0.5rem;
+.navIcon {
+  width: 20px;
+  padding: 0 1rem;
 }
 
-.navIcon {
-  width: 25px;
+.shoppingCart {
+  padding-bottom: 0.2rem;
 }
 
 @media screen and (max-width: 768px) {
-  .logo {
-    width: 20px;
-    height: 20px;
-  }
-
   .navIcon {
     width: 17px;
   }

@@ -11,8 +11,6 @@ const StyledNavItems = styled.div`
   justify-content: center;
   align-items: center;
 
-  padding: 0.5rem 1.5rem;
-
   font-size: 1.2rem;
   border: none;
   outline: none;
@@ -50,7 +48,7 @@ function Nav() {
     <StyledNav>
       <StyledNavItems>
         <Link to="/">
-          <img src={logo} title="Home" className="logo" alt="logo" />
+          <img src={logo} title="Home" className="navIcon" alt="logo" />
         </Link>
       </StyledNavItems>
       <StyledNavItems>
@@ -67,7 +65,7 @@ function Nav() {
         <Link to="/cart">
           <img
             src={shoppingCart}
-            className="navIcon"
+            className="navIcon shoppingCart"
             title="Shopping Cart"
             alt="shoppingCart"
           />
