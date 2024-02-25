@@ -23,7 +23,7 @@ const StyledNavItems = styled.div`
     linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2));
 
   &:active {
-    scale: 0.92;
+    scale: 1.5;
   }
 
   &:hover {
@@ -33,6 +33,7 @@ const StyledNavItems = styled.div`
       rgba(2, 29, 78, 0.681) 0%,
       rgba(31, 215, 232, 0.873) 200%
     );
+    border-radius: 15px;
     color: rgb(4, 4, 38);
   }
 `;
@@ -46,7 +47,7 @@ const StyledNav = styled.nav`
 function Nav() {
   return (
     <StyledNav>
-      <StyledNavItems>
+      <StyledNavItems to="/">
         <Link to="/">
           <img src={logo} title="Home" className="navIcon" alt="logo" />
         </Link>

@@ -32,15 +32,12 @@ nav {
 
 .navIcon {
   width: 20px;
-  padding: 0 1rem;
-}
-
-.shoppingCart {
-  padding-bottom: 0.2rem;
+  padding: 1rem 2rem;
 }
 
 @media screen and (max-width: 768px) {
   .navIcon {
     width: 17px;
+    padding: 0.5rem 1rem;
   }
 }
