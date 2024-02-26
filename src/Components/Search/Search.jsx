@@ -2,6 +2,15 @@ import React, { useState, useEffect } from "react";
 import "./Search.scss";
 import styled from "styled-components";
 import ProductCard from "../ProductCard/ProductCard";
+import Loader from "../Loader/Loader";
+
+const StyledP = styled.p`
+  font-size: 1.5rem;
+  color: white;
+  position: absolute;
+  top: 45%;
+  left: 40%;
+`;
 
 const StyledContainer = styled.div`
   width: 100%;
@@ -27,6 +36,7 @@ function Search() {
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
   const [products, setProducts] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
 
   useEffect(() => {
     // Fetch products from the API
@@ -36,7 +46,10 @@ function Search() {
         setProducts(data.data);
         setFilteredSuggestions(data.data); // Initialize filteredSuggestions with all products
       })
-      .catch((error) => console.error("Error fetching products:", error));
+      .catch((error) => {
+        console.error("Error fetching products:", error);
+        setFetchError(true);
+      });
   }, []);
 
   const handleInputChange = (event) => {
@@ -74,6 +87,11 @@ function Search() {
 
   return (
     <>
+      {fetchError && (
+        <StyledP>Something went wrong.. Please try again.</StyledP>
+      )}
+      {products.length === 0 && !fetchError && <Loader />}
+
       <StyledDiv>
         <form className="form">
           <label htmlFor="search">
@@ -105,25 +123,34 @@ function Search() {
         {/* Display suggestions */}
         {showSuggestions && searchInput && (
           <ul className="suggestions">
-            {filteredSuggestions.map((product) => (
-              <li
-                key={product.id}
-                onClick={() => handleSuggestionClick(product.title)}
-              >
-                {product.title}
-              </li>
-            ))}
+            {filteredSuggestions.length === 0 ? (
+              <li>No products found...</li>
+            ) : (
+              filteredSuggestions.map((product) => (
+                <li
+                  key={product.id}
+                  onClick={() => handleSuggestionClick(product.title)}
+                >
+                  {product.title}
+                </li>
+              ))
+            )}
           </ul>
         )}
       </StyledDiv>
+
       <StyledContainer>
-        {searchInput.trim() === ""
-          ? products.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))
-          : filteredSuggestions.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+        {searchInput.trim() === "" ? (
+          products.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))
+        ) : filteredSuggestions.length === 0 ? (
+          <StyledP>No products found...</StyledP>
+        ) : (
+          filteredSuggestions.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))
+        )}
       </StyledContainer>
     </>
   );
