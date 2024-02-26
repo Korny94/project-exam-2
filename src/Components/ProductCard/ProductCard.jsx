@@ -1,38 +1,61 @@
 import "./ProductCard.scss";
-import ProductContent from "./ProductContent.jsx";
 import React, { useEffect, useState } from "react";
-import Loader from "../Loader/Loader.jsx";
+import AddToCart from "../AddToCart/AddToCart.jsx";
+import styled from "styled-components";
+import { Link } from "react-router-dom";
 
-const API_URL = "https://v2.api.noroff.dev/online-shop";
+const StyledImg = styled.img`
+  width: 95%;
+  height: 95%;
+  object-fit: cover;
+  border-radius: 20px 20px 0 0;
+`;
 
-function ProductCard() {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+const StyledLink = styled.a`
+  width: 100%;
+  height: 80%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+`;
 
-  useEffect(() => {
-    async function fetchProducts() {
-      try {
-        const response = await fetch(API_URL);
-        const data = await response.json();
-        const allProducts = data.data;
-        // setProducts(allProducts);
-        if (response.ok) {
-          setLoading(false);
-          console.log(allProducts);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    fetchProducts();
-  }, []);
+const StyledFooter = styled.div`
+  width: 95%;
+  display: flex;
+  justify-content: space-between;
+  color: white;
+  margin-top: 0.5rem;
+`;
 
-  if (loading) {
-    return <Loader />;
-  }
+const StyledDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin-left: 0.7rem;
+`;
+
+function ProductCard({ product }) {
   return (
     <div className="card">
-      <div className="card2">{/* <ProductContent /> */}</div>
+      <div className="card2">
+        <Link to="/product">
+          <StyledLink>
+            <StyledImg src={product.image.url} alt="Product" />
+          </StyledLink>
+        </Link>
+
+        <StyledFooter>
+          <Link to="/product">
+            <StyledDiv>
+              <div>{product.title}</div>
+              <div>{product.price},-</div>
+            </StyledDiv>
+          </Link>
+          <AddToCart />
+        </StyledFooter>
+      </div>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import Search from "./Search/Search.jsx";
+import Search from "../Search/Search.jsx";
 import logo from "../../assets/logo.png";
 import shoppingCart from "../../assets/shoppingCart.png";
 import contact from "../../assets/contact.png";
