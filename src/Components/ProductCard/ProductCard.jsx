@@ -71,7 +71,7 @@ function ProductCard({ product }) {
   return (
     <div className="card">
       <div className="card2">
-        <Link to="/product">
+        <Link to="/product" productInfo={product}>
           <StyledLink>
             {onSale && <StyledSale>Sale!</StyledSale>}{" "}
             {/* Display "Sale" if product is on sale */}
