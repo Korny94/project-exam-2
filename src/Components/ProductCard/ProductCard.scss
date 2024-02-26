@@ -1,0 +1,32 @@
+.card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20vw;
+  min-width: 250px;
+  height: 50vh;
+  min-height: 254px;
+  background-image: linear-gradient(163deg, #8db4c9 0%, #317093 100%);
+  border-radius: 20px;
+  transition: all 0.3s;
+  margin: 1rem 2rem;
+}
+
+.card2 {
+  width: 20vw;
+  min-width: 250px;
+  height: 50vh;
+  min-height: 254px;
+  background-color: #1a1a1a;
+  border-radius: 0;
+  transition: all 0.2s;
+}
+
+.card2:hover {
+  transform: scale(0.98);
+  border-radius: 20px;
+}
+
+.card:hover {
+  box-shadow: 0px 0px 30px 1px #1f4c65;
+}

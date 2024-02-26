@@ -72,7 +72,6 @@ function Nav() {
           />
         </Link>
       </StyledNavItems>
-      <Search />
     </StyledNav>
   );
 }

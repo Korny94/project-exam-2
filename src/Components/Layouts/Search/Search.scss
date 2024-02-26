@@ -99,3 +99,16 @@ input:-webkit-autofill:active {
   -webkit-transition: "color 9999s ease-out, background-color 9999s ease-out";
   -webkit-transition-delay: 9999s;
 }
+
+.suggestions {
+  border-radius: 20px;
+  background-color: #212121;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 150px;
+  cursor: pointer;
+}
