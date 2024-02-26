@@ -1,9 +1,11 @@
 html::-webkit-scrollbar,
+.App::-webkit-scrollbar,
 html *::-webkit-scrollbar {
   height: 10px;
 }
 
 html::-webkit-scrollbar-thumb,
+.App::-webkit-scrollbar-thumb,
 html *::-webkit-scrollbar-thumb {
   background-color: #94949c6e;
   border-radius: 4px;
@@ -46,6 +48,13 @@ nav {
   justify-content: center;
   align-items: center;
   margin-left: 4rem;
+
+  @media screen and (max-width: 768px) {
+    margin-left: 2.5rem;
+    width: 20px;
+    height: 20px;
+    font-size: 0.9rem;
+  }
 }
 
 @media screen and (max-width: 768px) {

@@ -6,8 +6,17 @@ import Product from "./pages/Product/Product.jsx";
 import Cart from "./pages/ShoppingCart/ShoppingCart.jsx";
 import RouteNotFound from "./pages/RouteNotFound/RouteNotFound.jsx";
 import Layout from "./Components/Layouts/Layout.jsx";
+import { useEffect } from "react";
 
 function App() {
+  useEffect(() => {
+    // Update cart count when component mounts
+    const cartCount = document.getElementById("cartCount");
+    const cart = JSON.parse(localStorage.getItem("cart"));
+    if (cart) {
+      cartCount.innerHTML = cart.length;
+    }
+  }, []);
   return (
     <div className="App">
       <Routes>

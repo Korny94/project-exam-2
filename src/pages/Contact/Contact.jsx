@@ -100,8 +100,8 @@ function Contact() {
         setShowPopupMessage(true);
         setTimeout(() => {
           setShowPopupMessage(false);
-        }, 3000);
-      }, 3000);
+        }, 1500);
+      }, 1500);
     }
   };
 

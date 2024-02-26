@@ -63,7 +63,7 @@ function Nav() {
       </StyledNavItems>
       <StyledNavItems>
         <Link to="/cart">
-          <div id="cartCount">0</div>
+          <div id="cartCount"></div>
           <img
             src={shoppingCart}
             className="navIcon shoppingCart"
