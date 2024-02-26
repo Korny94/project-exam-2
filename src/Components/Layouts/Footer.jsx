@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 
 const StyledFooter = styled.footer`
   position: fixed;
+  z-index: 1000;
   background-color: #212121;
   bottom: 0;
   width: 100%;

@@ -1,8 +1,24 @@
 import "./AddToCart.scss";
 
-function AddToCart() {
+function AddToCart({ product }) {
+  function onClick() {
+    const cartCount = document.getElementById("cartCount");
+
+    if (localStorage.getItem("cart") === null) {
+      localStorage.setItem("cart", JSON.stringify([product]));
+    } else {
+      const cart = JSON.parse(localStorage.getItem("cart"));
+      if (cart.some((item) => item.id === product.id)) {
+        return;
+      } else {
+        cart.push(product);
+        localStorage.setItem("cart", JSON.stringify(cart));
+      }
+    }
+    cartCount.innerHTML = JSON.parse(localStorage.getItem("cart")).length;
+  }
   return (
-    <button class="CartBtn">
+    <button class="CartBtn" id={product.id} onClick={() => onClick(product)}>
       <span class="IconContainer">
         <svg
           xmlns="http://www.w3.org/2000/svg"

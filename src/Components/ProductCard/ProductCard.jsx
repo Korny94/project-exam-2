@@ -1,14 +1,15 @@
 import "./ProductCard.scss";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import AddToCart from "../AddToCart/AddToCart.jsx";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+import starRating from "../../assets/star.png";
 
 const StyledImg = styled.img`
   width: 95%;
   height: 95%;
   object-fit: cover;
-  border-radius: 20px 20px 0 0;
+  border-radius: 15px 15px 0 0;
 `;
 
 const StyledLink = styled.a`
@@ -36,12 +37,51 @@ const StyledDiv = styled.div`
   margin-left: 0.7rem;
 `;
 
+const StyledRating = styled.div`
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  margin-top: -250px;
+  margin-left: 300px;
+`;
+
+const StyledRatingP = styled.p`
+  position: absolute;
+  color: white;
+  font-weight: 600;
+  z-index: 1;
+`;
+
+const StyledSale = styled.div`
+  position: absolute;
+  background-color: red;
+  color: white;
+  padding: 0.5rem;
+  margin-top: -210px;
+  margin-left: -250px;
+  border-radius: 5px;
+`;
+
 function ProductCard({ product }) {
+  const onSale = product.discountedPrice < product.price; // Determine if the product is on sale
+  const isStarRating = product.rating > 0; // Determine if the product has a rating bigger than 0
+
   return (
     <div className="card">
       <div className="card2">
         <Link to="/product">
           <StyledLink>
+            {onSale && <StyledSale>Sale!</StyledSale>}{" "}
+            {/* Display "Sale" if product is on sale */}
+            {isStarRating && (
+              <StyledRating>
+                <StyledRatingP>{product.rating}</StyledRatingP>
+                <img src={starRating} className={"starRating"} alt="Rating" />
+              </StyledRating>
+            )}
+            {/* Display the star rating if the product has a rating bigger than 0 */}
             <StyledImg src={product.image.url} alt="Product" />
           </StyledLink>
         </Link>
@@ -50,10 +90,10 @@ function ProductCard({ product }) {
           <Link to="/product">
             <StyledDiv>
               <div>{product.title}</div>
-              <div>{product.price},-</div>
+              <div>{product.discountedPrice},-</div>
             </StyledDiv>
           </Link>
-          <AddToCart />
+          <AddToCart product={product} />
         </StyledFooter>
       </div>
     </div>

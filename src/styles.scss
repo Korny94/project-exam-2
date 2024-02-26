@@ -35,6 +35,19 @@ nav {
   padding: 1rem 2rem;
 }
 
+#cartCount {
+  position: absolute;
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 4rem;
+}
+
 @media screen and (max-width: 768px) {
   .navIcon {
     width: 17px;
