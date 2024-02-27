@@ -48,18 +48,18 @@ nav {
   justify-content: center;
   align-items: center;
   margin-left: 4rem;
-
-  @media screen and (max-width: 768px) {
-    margin-left: 2.5rem;
-    width: 20px;
-    height: 20px;
-    font-size: 0.9rem;
-  }
 }
 
 @media screen and (max-width: 768px) {
   .navIcon {
     width: 17px;
     padding: 0.5rem 1rem;
+  }
+
+  #cartCount {
+    margin-left: 2.5rem;
+    width: 20px;
+    height: 20px;
+    font-size: 0.9rem;
   }
 }

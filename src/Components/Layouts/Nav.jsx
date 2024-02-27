@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+import { useState, useEffect } from "react"; // Import useState and useEffect
 import logo from "../../assets/logo.png";
 import shoppingCart from "../../assets/shoppingCart.png";
 import contact from "../../assets/contact.png";
@@ -44,6 +45,16 @@ const StyledNav = styled.nav`
 `;
 
 function Nav() {
+  const [cartCount, setCartCount] = useState(0); // State to manage cart count
+
+  useEffect(() => {
+    // Update cart count when component mounts and when cart changes
+    const cart = JSON.parse(localStorage.getItem("cart"));
+    if (cart) {
+      setCartCount(cart.length);
+    }
+  }, []); // Empty dependency array to run the effect only once
+
   return (
     <StyledNav>
       <StyledNavItems to="/">
@@ -63,7 +74,8 @@ function Nav() {
       </StyledNavItems>
       <StyledNavItems>
         <Link to="/cart">
-          <div id="cartCount"></div>
+          {/* Display cart count */}
+          <div id="cartCount">{cartCount}</div>
           <img
             src={shoppingCart}
             className="navIcon shoppingCart"
