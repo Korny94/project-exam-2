@@ -30,7 +30,7 @@ const StyledPrice = styled.p`
   margin-left: 235px;
 `;
 
-function ShoppingCartCard({ product, totalPrice, setTotalPrice }) {
+function ShoppingCartCard({ product, totalPrice, setTotalPrice, productInfo }) {
   const [productNumber, setProductNumber] = useState(1);
   const cartCount = document.getElementById("cartCount");
 
@@ -68,9 +68,10 @@ function ShoppingCartCard({ product, totalPrice, setTotalPrice }) {
   return (
     <div className="container">
       <div className="box">
-        <Link to="/product" className="title" productInfo={product}>
+        <Link to="/product" className="title">
           {product.title}
         </Link>
+
         <StyledDiv>
           <img
             src={product.image.url}

@@ -134,76 +134,78 @@ function Contact() {
   }
 
   return (
-    <div className="form-container">
+    <>
       {!showLoader && (
-        <form className="form" onSubmit={handleSubmit}>
-          <div className="form-group">
-            <input
-              required
-              placeholder="Full Name"
-              name="name"
-              id="name"
-              type="text"
-              onBlur={handleNameBlur}
-              onChange={validateName}
-            />
-            {showNamePopup && (
-              <PopupMessage message="Must contain minimum 3 characters" /> // Pass onClose prop to handle popup close
-            )}{" "}
-          </div>
-          <div className="form-group">
-            <input
-              required
-              name="email"
-              placeholder="Email Address"
-              id="email"
-              type="text"
-              value={email}
-              onChange={handleEmailChange} // Handle email input change
-              onBlur={handleEmailBlur} // Validate email on blur and trigger popup
-            />
-            {showEmailPopup && !isValid && (
-              <PopupMessage message="Invalid email address" /> // Pass onClose prop to handle popup close
-            )}{" "}
-            {/* Conditionally render PopupMessage if email is invalid and showPopup is true */}
-          </div>
-          <div className="form-group">
-            <input
-              required
-              name="subject"
-              placeholder="Subject"
-              id="subject"
-              type="text"
-              onBlur={handleNameBlur}
-              onChange={validateName}
-            />
-            {showNamePopup && (
-              <PopupMessage message="Must contain minimum 3 characters" /> // Pass onClose prop to handle popup close
-            )}{" "}
-          </div>
-          <div className="form-group">
-            <textarea
-              required
-              placeholder="What can we help you with?"
-              cols="50"
-              rows="10"
-              id="textarea"
-              name="textarea"
-              onBlur={handleNameBlur}
-              onChange={validateName}
-            ></textarea>
-            {showNamePopup && (
-              <PopupMessage message="Must contain minimum 3 characters" /> // Pass onClose prop to handle popup close
-            )}{" "}
-          </div>
-          <button type="submit" className="form-submit-btn">
-            Submit
-          </button>
-        </form>
+        <div className="form-container">
+          <form className="form" onSubmit={handleSubmit}>
+            <div className="form-group">
+              <input
+                required
+                placeholder="Full Name"
+                name="name"
+                id="name"
+                type="text"
+                onBlur={handleNameBlur}
+                onChange={validateName}
+              />
+              {showNamePopup && (
+                <PopupMessage message="Must contain minimum 3 characters" /> // Pass onClose prop to handle popup close
+              )}{" "}
+            </div>
+            <div className="form-group">
+              <input
+                required
+                name="email"
+                placeholder="Email Address"
+                id="email"
+                type="text"
+                value={email}
+                onChange={handleEmailChange} // Handle email input change
+                onBlur={handleEmailBlur} // Validate email on blur and trigger popup
+              />
+              {showEmailPopup && !isValid && (
+                <PopupMessage message="Invalid email address" /> // Pass onClose prop to handle popup close
+              )}{" "}
+              {/* Conditionally render PopupMessage if email is invalid and showPopup is true */}
+            </div>
+            <div className="form-group">
+              <input
+                required
+                name="subject"
+                placeholder="Subject"
+                id="subject"
+                type="text"
+                onBlur={handleNameBlur}
+                onChange={validateName}
+              />
+              {showNamePopup && (
+                <PopupMessage message="Must contain minimum 3 characters" /> // Pass onClose prop to handle popup close
+              )}{" "}
+            </div>
+            <div className="form-group">
+              <textarea
+                required
+                placeholder="What can we help you with?"
+                cols="50"
+                rows="10"
+                id="textarea"
+                name="textarea"
+                onBlur={handleNameBlur}
+                onChange={validateName}
+              ></textarea>
+              {showNamePopup && (
+                <PopupMessage message="Must contain minimum 3 characters" /> // Pass onClose prop to handle popup close
+              )}{" "}
+            </div>
+            <button type="submit" className="form-submit-btn">
+              Submit
+            </button>
+          </form>
+        </div>
       )}
       {showPopupMessage && <PopupMessage message="Message sent successfully" />}
       {showLoader && <Loader />}
-    </div>
+    </>
   );
 }
 

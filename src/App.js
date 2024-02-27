@@ -7,6 +7,7 @@ import Cart from "./pages/ShoppingCart/ShoppingCart.jsx";
 import RouteNotFound from "./pages/RouteNotFound/RouteNotFound.jsx";
 import Layout from "./Components/Layouts/Layout.jsx";
 import { useEffect } from "react";
+import CheckoutSuccess from "./pages/CheckoutSuccess/CheckoutSuccess.jsx";
 
 function App() {
   useEffect(() => {
@@ -25,6 +26,7 @@ function App() {
           <Route path="product" element={<Product />} />
           <Route path="cart" element={<Cart />} />
           <Route path="contact" element={<Contact />} />
+          <Route path="checkoutSuccess" element={<CheckoutSuccess />} />
           <Route path="*" element={<RouteNotFound />} />
         </Route>
       </Routes>

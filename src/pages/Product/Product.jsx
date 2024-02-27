@@ -6,7 +6,9 @@ const StyledDiv = styled.div`
 `;
 
 function Product() {
-  return <StyledDiv>Product</StyledDiv>;
+  const productInfo = localStorage.getItem("product");
+
+  return <StyledDiv></StyledDiv>;
 }
 
 export default Product;
