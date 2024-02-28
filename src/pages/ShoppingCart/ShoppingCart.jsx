@@ -18,7 +18,6 @@ const StyledContainer = styled.div`
 
   @media (max-width: 768px) {
     width: 100%;
-    height: 40vh;
 
     &::-webkit-scrollbar {
       display: none;
@@ -55,7 +54,8 @@ const StyledDiv = styled.div`
   height: 70vh;
 
   @media (max-width: 768px) {
-    margin-top: 1rem;
+    margin-top: 2rem;
+    margin-bottom: 15rem;
   }
 `;
 

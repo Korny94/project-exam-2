@@ -76,7 +76,7 @@ function Search() {
     // Hide suggestions when the StyledDiv loses focus
     setTimeout(() => {
       setShowSuggestions(false);
-    }, 100);
+    }, 300);
   };
 
   const handleSuggestionClick = (title) => {

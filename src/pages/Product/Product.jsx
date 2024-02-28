@@ -125,6 +125,7 @@ const StyledRating = styled.div`
   align-items: center;
   justify-content: center;
   font-size: 1.8rem;
+  margin-bottom: 0.5rem;
 `;
 
 const StyledReview = styled.div`
