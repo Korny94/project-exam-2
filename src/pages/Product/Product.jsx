@@ -74,9 +74,9 @@ const StyledLine = styled.div`
   position: absolute;
   border: 1.5px solid red;
   border-radius: 50px;
-  width: 130px;
-  margin-top: 60px;
-  margin-left: -7px;
+  width: 120px;
+  margin-top: 50px;
+  margin-left: -13px;
   rotate: -5deg;
 `;
 
@@ -93,9 +93,12 @@ const StyledDiscount = styled.div`
 
 const DiscountH4 = styled.h4`
   opacity: 0.5;
+  font-size: 1.7rem;
 `;
 
-const StyledH4 = styled.h4``;
+const StyledH4 = styled.h4`
+  font-size: 1.7rem;
+`;
 
 const StyledH2 = styled.h2`
   margin-top: 0;
@@ -121,6 +124,7 @@ const StyledRating = styled.div`
   gap: 0.5rem;
   align-items: center;
   justify-content: center;
+  font-size: 1.8rem;
 `;
 
 const StyledReview = styled.div`
