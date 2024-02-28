@@ -31,8 +31,8 @@ const StyledProductInfo = styled.div`
 `;
 
 const StyledImg = styled.img`
-  width: 35vw;
-  height: 35vw;
+  width: 60vh;
+  height: 60vh;
   min-width: 300px;
   min-height: 300px;
   max-width: 450px;
