@@ -2,6 +2,7 @@ import "./Contact.scss";
 import PopupMessage from "../../Components/PopupMessage/PopupMessage.jsx";
 import React, { useState } from "react";
 import Loader from "../../Components/Loader/Loader.jsx";
+import ScrollToTop from "../../Components/ScrollToTop/ScrollToTop.jsx";
 
 function Contact() {
   const [email, setEmail] = useState("");
@@ -10,6 +11,7 @@ function Contact() {
   const [showNamePopup, setShowNamePopup] = useState(false); // State to control popup visibility
   const [showPopupMessage, setShowPopupMessage] = useState(false); // State to control popup visibility
   const [showLoader, setShowLoader] = useState(false); // State to control loader visibility
+  ScrollToTop();
 
   const validateEmail = (value) => {
     const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

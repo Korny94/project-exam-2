@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import Loader from "../../Components/Loader/Loader";
 import AddToCart from "../../Components/AddToCart/AddToCart";
 import star from "../../assets/star.png";
+import ScrollToTop from "../../Components/ScrollToTop/ScrollToTop";
 
 const StyledDiv = styled.div`
   color: white;
@@ -109,9 +110,13 @@ const StyledUser = styled.div`
   margin-top: 1rem;
 `;
 
+const StyledOrice = styled.h4`
+  margin-top: 0.1rem;
+`;
+
 function Product() {
   const [productInfo, setProductInfo] = useState(null);
-
+  ScrollToTop();
   useEffect(() => {
     // Simulate fetching product info from localStorage after 100ms
     const timeoutId = setTimeout(() => {
@@ -146,10 +151,10 @@ function Product() {
                 </StyledDiscount>
               </>
             ) : (
-              <StyledRating>
+              <StyledDiscount>
                 <AddToCart product={productInfo} />
-                <StyledH4>{productInfo.price},-</StyledH4>
-              </StyledRating>
+                <StyledOrice>{productInfo.price},-</StyledOrice>
+              </StyledDiscount>
             )}
 
             <StyledParagraph>{productInfo.description} </StyledParagraph>

@@ -3,6 +3,7 @@ import ShoppingCartCard from "./ShoppingCartCard.jsx";
 import "./ShoppingCart.scss";
 import { useState, useMemo, useEffect } from "react";
 import { Link } from "react-router-dom";
+import ScrollToTop from "../../Components/ScrollToTop/ScrollToTop.jsx";
 
 const StyledContainer = styled.div`
   display: flex;
@@ -66,6 +67,7 @@ function Cart() {
   const [totalPrice, setTotalPrice] = useState(0);
   const [isCartEmpty, setIsCartEmpty] = useState(false);
 
+  ScrollToTop();
   // Memoize the products array to prevent the useEffect dependency warning
   const products = useMemo(() => {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];

@@ -6,6 +6,7 @@ import shoppingCart from "../../assets/shoppingCart.png";
 import contact from "../../assets/contact.png";
 
 const StyledNavItems = styled.div`
+  position: relative;
   list-style: none;
   display: flex;
   justify-content: center;
@@ -44,6 +45,21 @@ const StyledNav = styled.nav`
   padding: 2rem 1rem 1rem 1rem;
 `;
 
+const StyledCartCount = styled.div`
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 15px; // Adjust the font size to fit within the smaller count container
+`;
+
 function Nav() {
   const [cartCount, setCartCount] = useState(0); // State to manage cart count
 
@@ -75,7 +91,7 @@ function Nav() {
       <StyledNavItems>
         <Link to="/cart">
           {/* Display cart count */}
-          <div id="cartCount">{cartCount}</div>
+          <StyledCartCount id="cartCount">{cartCount}</StyledCartCount>
           <img
             src={shoppingCart}
             className="navIcon shoppingCart"

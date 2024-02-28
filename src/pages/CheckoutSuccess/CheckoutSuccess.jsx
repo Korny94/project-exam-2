@@ -4,6 +4,7 @@ import styled from "styled-components";
 import "./CheckoutSuccess.scss";
 import homeBtn from "../../assets/logo.png";
 import { Link } from "react-router-dom";
+import ScrollToTop from "../../Components/ScrollToTop/ScrollToTop";
 
 const StyledDiv = styled.div`
   width: 100%;
@@ -31,6 +32,7 @@ const StyledContent = styled.div`
 
 function CheckoutSuccess() {
   const [loader, setLoader] = useState(true);
+  ScrollToTop();
   function clearCart() {
     localStorage.setItem("cart", JSON.stringify([]));
     const cartCount = document.getElementById("cartCount");
