@@ -46,6 +46,11 @@ const StyledRating = styled.div`
   z-index: 1;
   margin-top: -250px;
   margin-left: 300px;
+
+  @media (max-width: 399px) {
+    margin-left: 280px;
+    margin-top: -240px;
+  }
 `;
 
 const StyledRatingP = styled.p`
@@ -63,6 +68,10 @@ const StyledSale = styled.div`
   margin-top: -210px;
   margin-left: -250px;
   border-radius: 5px;
+
+  @media (max-width: 399px) {
+    margin-left: -220px;
+  }
 `;
 
 function ProductCard({ product }) {

@@ -31,15 +31,19 @@ const StyledProductInfo = styled.div`
 `;
 
 const StyledImg = styled.img`
-  width: 60vh;
-  height: 60vh;
-  min-width: 300px;
-  min-height: 300px;
-  max-width: 450px;
-  max-height: 450px;
+  width: 60vw;
+  height: 60vw;
+  min-width: 280px;
+  min-height: 280px;
+  max-width: 400px;
+  max-height: 400px;
   object-fit: cover;
   border-radius: 50%;
   margin-left: 2rem;
+
+  @media (max-width: 768px) {
+    margin-left: 0;
+  }
 `;
 
 const StyledSale = styled.div`

@@ -112,8 +112,8 @@ function Contact() {
         setShowPopupMessage(true);
         setTimeout(() => {
           setShowPopupMessage(false);
-        }, 1500);
-      }, 1500);
+        }, 2000);
+      }, 2000);
     }
   };
 
