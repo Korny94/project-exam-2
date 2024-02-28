@@ -12,6 +12,11 @@ const StyledDiv = styled.div`
   margin-top: 3rem;
   justify-content: space-evenly;
   width: 95vw;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+  }
 `;
 
 const StyledProductInfo = styled.div`
@@ -19,6 +24,10 @@ const StyledProductInfo = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  @media (max-width: 768px) {
+    width: 80%;
+    margin-top: 3rem;
 `;
 
 const StyledImg = styled.img`
@@ -42,9 +51,13 @@ const StyledSale = styled.div`
 `;
 
 const StyledParagraph = styled.p`
-  width: 75%;
+  width: 80%;
   margin: 0;
   margin-bottom: 3rem;
+
+  @media (max-width: 768px) {
+    width: 85%;
+  }
 `;
 
 const StyledLine = styled.div`
@@ -76,6 +89,10 @@ const StyledH4 = styled.h4``;
 
 const StyledH2 = styled.h2`
   margin-top: 0;
+
+  @media (max-width: 1000px) {
+    font-size: 2.4rem;
+  }
 `;
 
 const StyledStar = styled.img`
