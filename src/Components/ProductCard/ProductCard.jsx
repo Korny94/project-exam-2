@@ -65,42 +65,6 @@ const StyledSale = styled.div`
   border-radius: 5px;
 `;
 
-// function ProductCard({ product }) {
-//   const onSale = product.discountedPrice < product.price; // Determine if the product is on sale
-//   const isStarRating = product.rating > 0; // Determine if the product has a rating bigger than 0
-
-//   return (
-//     <div className="card">
-//       <div className="card2">
-//         <Link to="/product">
-//           <StyledLink>
-//             {onSale && <StyledSale>Sale!</StyledSale>}{" "}
-//             {/* Display "Sale" if product is on sale */}
-//             {isStarRating && (
-//               <StyledRating>
-//                 <StyledRatingP>{product.rating}</StyledRatingP>
-//                 <img src={starRating} className={"starRating"} alt="Rating" />
-//               </StyledRating>
-//             )}
-//             {/* Display the star rating if the product has a rating bigger than 0 */}
-//             <StyledImg src={product.image.url} alt="Product" />
-//           </StyledLink>
-//         </Link>
-
-//         <StyledFooter>
-//           <Link to="/product">
-//             <StyledDiv>
-//               <div>{product.title}</div>
-//               <div>{product.discountedPrice},-</div>
-//             </StyledDiv>
-//           </Link>
-//           <AddToCart product={product} />
-//         </StyledFooter>
-//       </div>
-//     </div>
-//   );
-// }
-
 function ProductCard({ product }) {
   const onSale = product.discountedPrice < product.price;
   const isStarRating = product.rating > 0;

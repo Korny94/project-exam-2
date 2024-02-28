@@ -2,10 +2,110 @@ import styled from "styled-components";
 import { useState, useEffect } from "react";
 import Loader from "../../Components/Loader/Loader";
 import AddToCart from "../../Components/AddToCart/AddToCart";
+import star from "../../assets/star.png";
 
 const StyledDiv = styled.div`
-  color: red;
+  color: white;
   font-size: 2rem;
+  display: flex;
+  margin-top: 3rem;
+  justify-content: space-evenly;
+  width: 95vw;
+`;
+
+const StyledProductInfo = styled.div`
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const StyledImg = styled.img`
+  width: 35vw;
+  height: 35vw;
+  min-width: 300px;
+  min-height: 300px;
+  max-width: 450px;
+  max-height: 450px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-left: 2rem;
+`;
+
+const StyledSale = styled.div`
+  background-color: red;
+  color: white;
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+  font-size: 1.1rem;
+`;
+
+const StyledParagraph = styled.p`
+  width: 75%;
+  margin: 0;
+  margin-bottom: 3rem;
+`;
+
+const StyledLine = styled.div`
+  position: absolute;
+  border: 1.5px solid red;
+  border-radius: 50px;
+  width: 130px;
+  margin-top: 60px;
+  margin-left: -7px;
+  rotate: -10deg;
+`;
+
+const StyledLineDiv = styled.div`
+  width: 120px;
+  height: 50px;
+`;
+
+const StyledDiscount = styled.div`
+  display: flex;
+  gap: 2rem;
+`;
+
+const DiscountH4 = styled.h4`
+  opacity: 0.5;
+`;
+
+const StyledH4 = styled.h4``;
+
+const StyledH2 = styled.h2`
+  margin-top: 0;
+`;
+
+const StyledStar = styled.img`
+  width: 25px;
+  height: 25px;
+  filter: drop-shadow(0 0 8px #ffffff46);
+`;
+
+const StyledRating = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+`;
+
+const StyledReview = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+`;
+
+const StyledReviewText = styled.p`
+  margin: 0;
+  opacity: 0.6;
+`;
+
+const StyledUser = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
 `;
 
 function Product() {
@@ -26,17 +126,57 @@ function Product() {
     <StyledDiv>
       {productInfo ? (
         <>
-          <div>{productInfo.title}</div>
-          <div>{productInfo.description}</div>
-          <div>{productInfo.discountedPrice},-</div>
-          <div>{productInfo.price},-</div>
-          <div>{productInfo.price - productInfo.discountedPrice},-</div>
-          <img src={productInfo.image.url} alt="Product" />
-          <div>{productInfo.rating}</div>
-          <div>productInfo.reviews</div>
-          <AddToCart product={productInfo} />
+          <StyledImg src={productInfo.image.url} alt="Product" />
+          <StyledProductInfo>
+            <StyledH2>{productInfo.title}</StyledH2>
+            {productInfo.discountedPrice < productInfo.price ? (
+              <>
+                <StyledDiscount>
+                  <AddToCart product={productInfo} />
+                  <StyledSale>On Sale!</StyledSale>
+                </StyledDiscount>
 
-          {/* Render other product info */}
+                <StyledDiscount>
+                  <StyledLineDiv>
+                    <StyledLine />
+                    <DiscountH4>{productInfo.price},-</DiscountH4>
+                  </StyledLineDiv>
+                  <StyledH4>{productInfo.discountedPrice},-</StyledH4>
+                </StyledDiscount>
+              </>
+            ) : (
+              <StyledRating>
+                <AddToCart product={productInfo} />
+                <StyledH4>{productInfo.price},-</StyledH4>
+              </StyledRating>
+            )}
+
+            <StyledParagraph>{productInfo.description} </StyledParagraph>
+
+            {productInfo.rating > 0 && (
+              <StyledRating>
+                <div>{productInfo.rating}</div>
+                <StyledStar src={star} alt="Star" />
+              </StyledRating>
+            )}
+            <div>
+              {productInfo.reviews.map((review, index) => (
+                <StyledReview key={index}>
+                  <StyledUser>
+                    {/* Display stars based on the rating */}
+                    <StyledRating>
+                      <StyledReviewText>{review.rating}</StyledReviewText>
+                      <StyledStar src={star} alt="Star" />
+                    </StyledRating>
+                    {/* Display the username */}
+                    <StyledReviewText>{review.username}</StyledReviewText>
+                  </StyledUser>
+                  {/* Display the description */}
+                  <StyledReviewText>{review.description}</StyledReviewText>
+                </StyledReview>
+              ))}
+            </div>
+          </StyledProductInfo>
         </>
       ) : (
         <Loader />
