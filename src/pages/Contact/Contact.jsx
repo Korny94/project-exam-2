@@ -89,6 +89,16 @@ function Contact() {
       message.style.border = "1px solid red"; // Set border color to red
       return; // Exit function early
     } else {
+      console.log(
+        "Full Name: ",
+        fullName.value + "\n",
+        "Email Address: ",
+        email.value + "\n",
+        "Subject: ",
+        subject.value + "\n",
+        "Message: ",
+        message.value
+      );
       setShowLoader(true); // Show loader before form submission
       setTimeout(() => {
         // Simulate form submission delay
