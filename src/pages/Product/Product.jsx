@@ -55,6 +55,7 @@ font-size: 1.5rem;
   width: 85%;
   margin: 0;
   margin-bottom: 3rem;
+  text-align: center;
 
   @media (max-width: 768px) {
     width: 85%;
@@ -72,7 +73,7 @@ const StyledLine = styled.div`
   width: 130px;
   margin-top: 60px;
   margin-left: -7px;
-  rotate: -10deg;
+  rotate: -5deg;
 `;
 
 const StyledLineDiv = styled.div`
