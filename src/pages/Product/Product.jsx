@@ -64,6 +64,7 @@ const StyledLineDiv = styled.div`
 const StyledDiscount = styled.div`
   display: flex;
   gap: 2rem;
+  margin-top: -1rem;
 `;
 
 const DiscountH4 = styled.h4`
