@@ -51,12 +51,14 @@ const StyledSale = styled.div`
 `;
 
 const StyledParagraph = styled.p`
+font-size: 1.5rem;
   width: 85%;
   margin: 0;
   margin-bottom: 3rem;
 
   @media (max-width: 768px) {
     width: 85%;
+    font-size: 1.3rem;
   }
 
   @media (max-width: 499px) {
@@ -125,6 +127,7 @@ const StyledReview = styled.div`
 const StyledReviewText = styled.p`
   margin: 0;
   opacity: 0.6;
+  font-size: 1.5rem;
 `;
 
 const StyledUser = styled.div`
