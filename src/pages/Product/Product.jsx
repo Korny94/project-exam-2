@@ -51,13 +51,16 @@ const StyledSale = styled.div`
 `;
 
 const StyledParagraph = styled.p`
-  width: 80%;
+  width: 85%;
   margin: 0;
   margin-bottom: 3rem;
 
   @media (max-width: 768px) {
     width: 85%;
   }
+
+  @media (max-width: 499px) {
+    width: 95%;
 `;
 
 const StyledLine = styled.div`
@@ -92,6 +95,11 @@ const StyledH2 = styled.h2`
 
   @media (max-width: 1000px) {
     font-size: 2.4rem;
+  }
+
+  @media (max-width: 499px) {
+    font-size: 1.8rem;
+    margin-bottom: 2.5rem;
   }
 `;
 

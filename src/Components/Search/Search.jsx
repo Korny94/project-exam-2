@@ -72,11 +72,11 @@ function Search() {
     setShowSuggestions(inputValue.trim() !== "");
   };
 
-  const handleInputBlur = () => {
-    // Hide suggestions when mouse leaves the search input and the input is empty
-    if (!searchInput.trim()) {
+  const handleBlur = () => {
+    // Hide suggestions when the StyledDiv loses focus
+    setTimeout(() => {
       setShowSuggestions(false);
-    }
+    }, 100);
   };
 
   const handleSuggestionClick = (title) => {
@@ -92,7 +92,7 @@ function Search() {
       )}
       {products.length === 0 && !fetchError && <Loader />}
 
-      <StyledDiv>
+      <StyledDiv onBlur={handleBlur}>
         <form className="form">
           <label htmlFor="search">
             <input
@@ -103,7 +103,6 @@ function Search() {
               id="search"
               value={searchInput}
               onChange={handleInputChange}
-              onBlur={handleInputBlur} // Handle when the input loses focus
               autoComplete="off" // Disable autocomplete
             />
             <div className="fancy-bg"></div>
