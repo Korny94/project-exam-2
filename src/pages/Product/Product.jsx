@@ -19,6 +19,14 @@ const StyledDiv = styled.div`
   }
 `;
 
+const StyledDiv2 = styled.div`
+  width: 50%;
+  align-items: center;
+  margin-top: 3rem;
+  display: flex;
+  flex-direction: column;
+`;
+
 const StyledProductInfo = styled.div`
   width: 50%;
   display: flex;
@@ -27,16 +35,16 @@ const StyledProductInfo = styled.div`
 
   @media (max-width: 768px) {
     width: 80%;
-    margin-top: 3rem;
+  }
 `;
 
 const StyledImg = styled.img`
   width: 60vw;
   height: 60vw;
-  min-width: 280px;
-  min-height: 280px;
-  max-width: 400px;
-  max-height: 400px;
+  min-width: 300px;
+  min-height: 300px;
+  max-width: 300px;
+  max-height: 300px;
   object-fit: cover;
   border-radius: 50%;
   margin-left: 2rem;
@@ -46,43 +54,15 @@ const StyledImg = styled.img`
   }
 `;
 
-const StyledSale = styled.div`
-  background-color: red;
-  color: white;
-  padding: 0.6rem 1rem;
-  border-radius: 10px;
-  font-size: 1.1rem;
-`;
-
 const StyledParagraph = styled.p`
-font-size: 1.5rem;
-  width: 85%;
+  font-size: 1.3rem;
   margin: 0;
   margin-bottom: 3rem;
-  text-align: center;
+  width: 175%;
 
   @media (max-width: 768px) {
-    width: 85%;
     font-size: 1.3rem;
   }
-
-  @media (max-width: 499px) {
-    width: 95%;
-`;
-
-const StyledLine = styled.div`
-  position: absolute;
-  border: 1.5px solid red;
-  border-radius: 50px;
-  width: 120px;
-  margin-top: 50px;
-  margin-left: -13px;
-  rotate: -5deg;
-`;
-
-const StyledLineDiv = styled.div`
-  width: 120px;
-  height: 50px;
 `;
 
 const StyledDiscount = styled.div`
@@ -92,17 +72,13 @@ const StyledDiscount = styled.div`
   align-items: center;
 `;
 
-const DiscountH4 = styled.h4`
-  opacity: 0.5;
-  font-size: 1.7rem;
-`;
-
 const StyledH4 = styled.h4`
   font-size: 1.7rem;
 `;
 
 const StyledH2 = styled.h2`
   margin-top: 0;
+  color: white;
 
   @media (max-width: 1000px) {
     font-size: 2.4rem;
@@ -129,30 +105,6 @@ const StyledRating = styled.div`
   margin-bottom: 0.5rem;
 `;
 
-const StyledReview = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 1rem;
-`;
-
-const StyledReviewText = styled.p`
-  margin: 0;
-  opacity: 0.6;
-  font-size: 1.5rem;
-`;
-
-const StyledUser = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
-  margin-top: 1rem;
-`;
-
-const StyledOrice = styled.h4`
-  margin-top: 0.1rem;
-`;
-
 function Product() {
   const [productInfo, setProductInfo] = useState(null);
   ScrollToTop();
@@ -173,25 +125,24 @@ function Product() {
         <>
           <StyledImg src={productInfo.media[0].url} alt="Product" />
 
-          <StyledProductInfo>
-          {productInfo.rating > 0 && (
-              <StyledRating>
-                <div>{productInfo.rating} / 5</div>
-                <StyledStar src={star} alt="Star" />
-              </StyledRating>
-            )}
-            <StyledH2>{productInfo.title}</StyledH2>
-              <>
-                <StyledDiscount>
-                  <AddToCart product={productInfo} />
-                  <StyledH4>{productInfo.price},-</StyledH4>
-                </StyledDiscount>
-              </>
+          <StyledDiv2>
+            <StyledH2>{productInfo.name}</StyledH2>
 
-            <StyledParagraph>{productInfo.description} </StyledParagraph>
+            <StyledProductInfo>
+              <StyledDiscount>
+                {productInfo.rating > 0 && (
+                  <StyledRating>
+                    <h6>{productInfo.rating.toFixed(1)}</h6>
+                    <StyledStar src={star} alt="Star" />
+                  </StyledRating>
+                )}
+                <AddToCart product={productInfo} />
+                <StyledH4>{productInfo.price},-</StyledH4>
+              </StyledDiscount>
 
-
-          </StyledProductInfo>
+              <StyledParagraph>{productInfo.description} </StyledParagraph>
+            </StyledProductInfo>
+          </StyledDiv2>
         </>
       ) : (
         <Loader />

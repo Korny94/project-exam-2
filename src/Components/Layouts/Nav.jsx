@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"; // Import useState and useEffect
 import logo from "../../assets/logo.png";
 import shoppingCart from "../../assets/shoppingCart.png";
 import contact from "../../assets/contact.png";
+import profile from "../../assets/profile.png";
 
 const StyledNavItems = styled.div`
   position: relative;
@@ -78,16 +79,7 @@ function Nav() {
           <img src={logo} title="Home" className="navIcon" alt="logo" />
         </Link>
       </StyledNavItems>
-      <StyledNavItems>
-        <Link to="/contact">
-          <img
-            src={contact}
-            className="navIcon"
-            title="Contact"
-            alt="contact"
-          />
-        </Link>
-      </StyledNavItems>
+
       <StyledNavItems>
         <Link to="/cart">
           {/* Display cart count */}
@@ -97,6 +89,16 @@ function Nav() {
             className="navIcon shoppingCart"
             title="Shopping Cart"
             alt="shoppingCart"
+          />
+        </Link>
+      </StyledNavItems>
+      <StyledNavItems>
+        <Link to="/">
+          <img
+            src={profile}
+            className="navIcon"
+            title="Profile"
+            alt="profile"
           />
         </Link>
       </StyledNavItems>

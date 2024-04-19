@@ -1,10 +1,14 @@
 import "./ProductCard.scss";
 import React from "react";
-import AddToCart from "../AddToCart/AddToCart.jsx";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import starRating from "../../assets/star.png";
 import { useState } from "react";
+import wifi from "../../assets/wifi.png";
+import parking from "../../assets/parking.png";
+import pets from "../../assets/pets.png";
+import breakfast from "../../assets/breakfast.png";
+import noImage from "../../assets/noImage.png";
 
 const StyledImg = styled.img`
   width: 95%;
@@ -24,18 +28,26 @@ const StyledLink = styled.a`
 `;
 
 const StyledFooter = styled.div`
-  width: 95%;
+  width: 92%;
   display: flex;
   justify-content: space-between;
   color: white;
-  margin-top: 0.5rem;
+  margin: 0.2rem 0.8rem;
 `;
 
 const StyledDiv = styled.div`
+  margin: 0;
   display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-  margin-left: 0.7rem;
+  align-items: center;
+  justify-content: center;
+  width: 90%;
+  margin: 0.7rem 1rem;
+  gap: 1rem;
+`;
+
+const StyledIcon = styled.img`
+  width: 15px;
+  height: 15px;
 `;
 
 const StyledRating = styled.div`
@@ -60,22 +72,30 @@ const StyledRatingP = styled.p`
   z-index: 1;
 `;
 
-const StyledSale = styled.div`
-  position: absolute;
-  background-color: red;
-  color: white;
-  padding: 0.5rem;
-  margin-top: -210px;
-  margin-left: -250px;
-  border-radius: 5px;
+const StyledH2 = styled.h2`
+  font-size: 1.3rem;
+  margin: 0;
+  max-width: 60%;
+  overflow: hidden;
+  text-wrap: nowrap;
+`;
 
-  @media (max-width: 399px) {
-    margin-left: -220px;
-  }
+const StyledPrice = styled.p`
+  font-size: 1.3rem;
+  margin: 0;
+  max-width: 35%;
+  overflow: hidden;
+  color: rgba(255, 255, 255, 0.8);
 `;
 
 function ProductCard({ product }) {
+  const isWifi = product.meta.wifi === true;
+  const isParking = product.meta.parking === true;
+  const isPets = product.meta.pets === true;
+  const isBreakfast = product.meta.breakfast === true;
+  const isImage = product.media[0].url !== null || product.media[0].url !== "";
   const isStarRating = product.rating > 0;
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   const getProductInfo = (product) => {
     localStorage.setItem("productInfo", JSON.stringify(product));
@@ -88,23 +108,44 @@ function ProductCard({ product }) {
           <StyledLink>
             {isStarRating && (
               <StyledRating>
-                <StyledRatingP>{product.rating}</StyledRatingP>
+                <StyledRatingP>{product.rating.toFixed(1)}</StyledRatingP>
                 <img src={starRating} className={"starRating"} alt="Rating" />
               </StyledRating>
             )}
-            <StyledImg src={product.media[0].url} alt="Product" />
+            {isImage && product.media.length > 0 && (
+              <StyledImg
+                src={product.media[0].url}
+                alt="Product"
+                onLoad={() => setImageLoaded(true)}
+                onError={() => setImageLoaded(false)}
+                style={{ display: imageLoaded ? "inline" : "none" }}
+              />
+            )}
+            {!imageLoaded && (
+              <StyledImg
+                src={noImage}
+                alt="Default Image"
+                style={{ display: imageLoaded ? "none" : "inline" }}
+              />
+            )}
           </StyledLink>
         </Link>
 
-        <StyledFooter>
-          <Link to="/product">
-            <StyledDiv>
-              <div>{product.title}</div>
-              <div>{product.price},-</div>
-            </StyledDiv>
-          </Link>
-          <AddToCart product={product} />
-        </StyledFooter>
+        <Link to="/product">
+          <StyledFooter>
+            <StyledH2>
+              {product.name.charAt(0).toUpperCase() + product.name.slice(1)}
+            </StyledH2>
+
+            <StyledPrice>{product.price},-</StyledPrice>
+          </StyledFooter>
+          <StyledDiv>
+            {isWifi && <StyledIcon src={wifi} alt="Wifi" />}
+            {isParking && <StyledIcon src={parking} alt="Parking" />}
+            {isPets && <StyledIcon src={pets} alt="Pets" />}
+            {isBreakfast && <StyledIcon src={breakfast} alt="Breakfast" />}
+          </StyledDiv>
+        </Link>
       </div>
     </div>
   );
