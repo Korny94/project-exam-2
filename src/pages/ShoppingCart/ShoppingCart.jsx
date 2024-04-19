@@ -79,7 +79,7 @@ function Cart() {
   useEffect(() => {
     let total = 0;
     products.forEach((product) => {
-      total += product.discountedPrice || 0;
+      total += product.price || 0;
     });
     setTotalPrice(total);
   }, [products]);

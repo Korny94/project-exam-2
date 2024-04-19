@@ -89,6 +89,7 @@ const StyledDiscount = styled.div`
   display: flex;
   gap: 2rem;
   margin-top: -1rem;
+  align-items: center;
 `;
 
 const DiscountH4 = styled.h4`
@@ -170,56 +171,26 @@ function Product() {
     <StyledDiv>
       {productInfo ? (
         <>
-          <StyledImg src={productInfo.image.url} alt="Product" />
+          <StyledImg src={productInfo.media[0].url} alt="Product" />
+
           <StyledProductInfo>
-            <StyledH2>{productInfo.title}</StyledH2>
-            {productInfo.discountedPrice < productInfo.price ? (
-              <>
-                <StyledDiscount>
-                  <AddToCart product={productInfo} />
-                  <StyledSale>On Sale!</StyledSale>
-                </StyledDiscount>
-
-                <StyledDiscount>
-                  <StyledLineDiv>
-                    <StyledLine />
-                    <DiscountH4>{productInfo.price},-</DiscountH4>
-                  </StyledLineDiv>
-                  <StyledH4>{productInfo.discountedPrice},-</StyledH4>
-                </StyledDiscount>
-              </>
-            ) : (
-              <StyledDiscount>
-                <AddToCart product={productInfo} />
-                <StyledOrice>{productInfo.price},-</StyledOrice>
-              </StyledDiscount>
-            )}
-
-            <StyledParagraph>{productInfo.description} </StyledParagraph>
-
-            {productInfo.rating > 0 && (
+          {productInfo.rating > 0 && (
               <StyledRating>
-                <div>{productInfo.rating}</div>
+                <div>{productInfo.rating} / 5</div>
                 <StyledStar src={star} alt="Star" />
               </StyledRating>
             )}
-            <div>
-              {productInfo.reviews.map((review, index) => (
-                <StyledReview key={index}>
-                  <StyledUser>
-                    {/* Display stars based on the rating */}
-                    <StyledRating>
-                      <StyledReviewText>{review.rating}</StyledReviewText>
-                      <StyledStar src={star} alt="Star" />
-                    </StyledRating>
-                    {/* Display the username */}
-                    <StyledReviewText>{review.username}</StyledReviewText>
-                  </StyledUser>
-                  {/* Display the description */}
-                  <StyledReviewText>{review.description}</StyledReviewText>
-                </StyledReview>
-              ))}
-            </div>
+            <StyledH2>{productInfo.title}</StyledH2>
+              <>
+                <StyledDiscount>
+                  <AddToCart product={productInfo} />
+                  <StyledH4>{productInfo.price},-</StyledH4>
+                </StyledDiscount>
+              </>
+
+            <StyledParagraph>{productInfo.description} </StyledParagraph>
+
+
           </StyledProductInfo>
         </>
       ) : (

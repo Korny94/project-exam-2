@@ -75,7 +75,6 @@ const StyledSale = styled.div`
 `;
 
 function ProductCard({ product }) {
-  const onSale = product.discountedPrice < product.price;
   const isStarRating = product.rating > 0;
 
   const getProductInfo = (product) => {
@@ -87,14 +86,13 @@ function ProductCard({ product }) {
       <div className="card2">
         <Link to="/product" onClick={() => getProductInfo(product)}>
           <StyledLink>
-            {onSale && <StyledSale>Sale!</StyledSale>}
             {isStarRating && (
               <StyledRating>
                 <StyledRatingP>{product.rating}</StyledRatingP>
                 <img src={starRating} className={"starRating"} alt="Rating" />
               </StyledRating>
             )}
-            <StyledImg src={product.image.url} alt="Product" />
+            <StyledImg src={product.media[0].url} alt="Product" />
           </StyledLink>
         </Link>
 
@@ -102,7 +100,7 @@ function ProductCard({ product }) {
           <Link to="/product">
             <StyledDiv>
               <div>{product.title}</div>
-              <div>{product.discountedPrice},-</div>
+              <div>{product.price},-</div>
             </StyledDiv>
           </Link>
           <AddToCart product={product} />

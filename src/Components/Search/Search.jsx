@@ -40,11 +40,13 @@ function Search() {
 
   useEffect(() => {
     // Fetch products from the API
-    fetch("https://v2.api.noroff.dev/online-shop")
+    fetch("https://v2.api.noroff.dev/holidaze/venues?&_bookings=true")
       .then((response) => response.json())
       .then((data) => {
         setProducts(data.data);
         setFilteredSuggestions(data.data); // Initialize filteredSuggestions with all products
+      console.log(data.data)
+
       })
       .catch((error) => {
         console.error("Error fetching products:", error);
@@ -52,16 +54,18 @@ function Search() {
       });
   }, []);
 
+
+
   const handleInputChange = (event) => {
     const inputValue = event.target.value;
     setSearchInput(inputValue);
 
     // Filter products based on the input value
     const filteredProducts = products.filter((product) => {
-      const { title, tags } = product;
+      const { name, description } = product;
       return (
-        title.toLowerCase().includes(inputValue.toLowerCase()) ||
-        tags.some((tag) => tag.toLowerCase().includes(inputValue.toLowerCase()))
+        name.toLowerCase().includes(inputValue.toLowerCase()) ||
+        description.toLowerCase().includes(inputValue.toLowerCase())
       );
     });
 
@@ -79,9 +83,9 @@ function Search() {
     }, 300);
   };
 
-  const handleSuggestionClick = (title) => {
-    setSearchInput(title); // Set the search input value to the clicked suggestion
-    handleInputChange({ target: { value: title } }); // Manually trigger handleInputChange
+  const handleSuggestionClick = (name) => {
+    setSearchInput(name); // Set the search input value to the clicked suggestion
+    handleInputChange({ target: { value: name } }); // Manually trigger handleInputChange
     setShowSuggestions(false); // Hide suggestions after clicking on a suggestion
   };
 
@@ -128,9 +132,9 @@ function Search() {
               filteredSuggestions.map((product) => (
                 <li
                   key={product.id}
-                  onClick={() => handleSuggestionClick(product.title)}
+                  onClick={() => handleSuggestionClick(product.name)}
                 >
-                  {product.title}
+                  {product.name}
                 </li>
               ))
             )}

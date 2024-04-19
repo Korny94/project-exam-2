@@ -45,7 +45,7 @@ function ShoppingCartCard({ product, totalPrice, setTotalPrice, productInfo }) {
     const productsCart = JSON.parse(localStorage.getItem("cart"));
     productsCart.push(product);
     localStorage.setItem("cart", JSON.stringify(productsCart));
-    setTotalPrice(totalPrice + product.discountedPrice);
+    setTotalPrice(totalPrice + product.price);
   }
 
   function decrement() {
@@ -60,7 +60,7 @@ function ShoppingCartCard({ product, totalPrice, setTotalPrice, productInfo }) {
         ];
         localStorage.setItem("cart", JSON.stringify(updatedCart));
       }
-      setTotalPrice(totalPrice - product.discountedPrice);
+      setTotalPrice(totalPrice - product.price);
       cartCount.textContent = parseInt(cartCount.textContent) - 1;
     }
   }
@@ -69,12 +69,12 @@ function ShoppingCartCard({ product, totalPrice, setTotalPrice, productInfo }) {
     <div className="container">
       <div className="box">
         <Link to="/product" className="title">
-          {product.title}
+          {product.name}
         </Link>
 
         <StyledDiv>
           <img
-            src={product.image.url}
+            src={product.media[0].url}
             alt={product.title + "Product Image"}
             className="productImage"
           />
@@ -90,7 +90,7 @@ function ShoppingCartCard({ product, totalPrice, setTotalPrice, productInfo }) {
             +
           </StyledBtn>
         </StyledDiv>
-        <StyledPrice>{product.discountedPrice}</StyledPrice>
+        <StyledPrice>{product.price},-</StyledPrice>
       </div>
     </div>
   );
