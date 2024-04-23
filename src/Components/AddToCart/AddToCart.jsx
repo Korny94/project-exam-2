@@ -1,43 +1,243 @@
 import "./AddToCart.scss";
+import ticket from "../../assets/ticket.svg";
+import styled from "styled-components";
 
-function AddToCart({ product }) {
-  function onClick() {
-    const cartCount = document.getElementById("cartCount");
+import * as React from "react";
+import Fab from "@mui/material/Fab";
+import Modal from "@mui/material/Modal";
 
-    if (localStorage.getItem("cart") === null) {
-      localStorage.setItem("cart", JSON.stringify([product]));
-      cartCount.innerHTML = 0;
-    } else {
-      const cart = JSON.parse(localStorage.getItem("cart"));
-      if (cart.some((item) => item.id === product.id)) {
-        return;
-      } else {
-        cart.push(product);
-        localStorage.setItem("cart", JSON.stringify(cart));
-      }
-    }
-    cartCount.innerHTML = JSON.parse(localStorage.getItem("cart")).length;
-  }
+import dayjs from "dayjs";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { PickersDay } from "@mui/x-date-pickers/PickersDay";
+import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
+
+function ServerDay(props) {
+  const { highlightedDays = [], day, outsideCurrentMonth, ...other } = props;
+
+  const isTodayOrLater = dayjs(day).isAfter(dayjs(), "day"); // Check if the day is today or later
+  const isDisabled = !isTodayOrLater || highlightedDays.includes(day.date()); // Check if the day is disabled
 
   return (
-    <button
-      className="CartBtn"
-      id={product.id}
-      onClick={() => onClick(product)}
-    >
-      <span className="IconContainer">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          height="1em"
-          viewBox="0 0 576 512"
-          fill="rgb(17, 17, 17)"
-          className="cart"
-        >
-          <path d="M0 24C0 10.7 10.7 0 24 0H69.5c22 0 41.5 12.8 50.6 32h411c26.3 0 45.5 25 38.6 50.4l-41 152.3c-8.5 31.4-37 53.3-69.5 53.3H170.7l5.4 28.5c2.2 11.3 12.1 19.5 23.6 19.5H488c13.3 0 24 10.7 24 24s-10.7 24-24 24H199.7c-34.6 0-64.3-24.6-70.7-58.5L77.4 54.5c-.7-3.8-4-6.5-7.9-6.5H24C10.7 48 0 37.3 0 24zM128 464a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm336-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"></path>
-        </svg>
-      </span>
-      <p className="darkText">Book Now!</p>
-    </button>
+    <PickersDay
+      {...other}
+      outsideCurrentMonth={outsideCurrentMonth}
+      day={day}
+      disabled={isDisabled} // Disable the day if it's included in highlightedDays or it's not today or later
+    />
+  );
+}
+
+const StyledIcon = styled.img`
+  width: 17px;
+  height: 17px;
+`;
+
+const StyledModal = styled.div`
+  width: 80vw;
+  max-width: 400px;
+  background-color: white;
+  margin: 1rem auto;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+`;
+
+const StyledH2 = styled.h2`
+  margin: 1rem 0 0 0;
+`;
+
+function AddToCart({ product }) {
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  const [fromValue, setFromValue] = React.useState(dayjs());
+  const [toValue, setToValue] = React.useState(dayjs().add(1, "day"));
+
+  const handleNewFromValue = (newValue) => {
+    setFromValue(newValue);
+    console.log(newValue, getAdjustedISOString(newValue));
+  };
+
+  const handleNewToValue = (newValue) => {
+    setToValue(newValue);
+    console.log(newValue, getAdjustedISOString(newValue));
+  };
+
+  const handleBooking = () => {
+    if (fromValue.isAfter(toValue)) {
+      alert("The 'from' date must be before the 'to' date.");
+    } else if (fromValue.isSame(toValue, "day")) {
+      alert("The 'from' date cannot be the same as the 'to' date.");
+    } else {
+      if (localStorage.getItem("bookings") === null) {
+        localStorage.setItem("bookings", JSON.stringify([]));
+      }
+      const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+
+      // Create a new booking object
+      const newBooking = {
+        from: getAdjustedISOString(fromValue),
+        to: getAdjustedISOString(toValue),
+        productId: product.id,
+      };
+
+      // Push the new booking object into the bookings array
+      bookings.push(newBooking);
+
+      // Update the localStorage with the updated bookings array
+      localStorage.setItem("bookings", JSON.stringify(bookings));
+
+      handleClose();
+    }
+  };
+
+  // Function to get ISO string with adjusted time zone offset
+  const getAdjustedISOString = (date) => {
+    const offsetMinutes = date.utcOffset();
+    const adjustedDate = date.add(offsetMinutes, "minute");
+    return adjustedDate.toISOString();
+  };
+
+  const requestAbortController = React.useRef(null);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [highlightedDays, setHighlightedDays] = React.useState([1, 2, 15]);
+
+  const fetchHighlightedDays = (date) => {
+    const controller = new AbortController();
+
+    // Filter the bookings array to get the bookings within the current month
+    const bookingsInMonth = product.bookings.filter((booking) => {
+      const bookingDateFrom = dayjs(booking.dateFrom);
+      const bookingDateTo = dayjs(booking.dateTo);
+      return (
+        bookingDateFrom.isSame(date, "month") ||
+        bookingDateTo.isSame(date, "month") ||
+        (bookingDateFrom.isBefore(date, "month") &&
+          bookingDateTo.isAfter(date, "month"))
+      );
+    });
+
+    // Generate an array of days to highlight for each booking
+    const daysToHighlight = bookingsInMonth.reduce(
+      (highlightedDays, booking) => {
+        const bookingDateFrom = dayjs(booking.dateFrom);
+        const bookingDateTo = dayjs(booking.dateTo);
+        const daysInRange = [];
+
+        // Loop through each day within the booking range and add it to the array
+        for (
+          let date = bookingDateFrom;
+          date.isBefore(bookingDateTo) || date.isSame(bookingDateTo, "day");
+          date = date.add(1, "day")
+        ) {
+          if (date.isSame(date, "month")) {
+            daysInRange.push(date.date());
+          }
+        }
+
+        return [...highlightedDays, ...daysInRange];
+      },
+      []
+    );
+
+    setHighlightedDays(daysToHighlight);
+    setIsLoading(false);
+
+    requestAbortController.current = controller;
+  };
+
+  React.useEffect(() => {
+    fetchHighlightedDays();
+    // abort request on unmount
+    return () => requestAbortController.current?.abort();
+  }, []);
+
+  const handleMonthChange = (date) => {
+    if (requestAbortController.current) {
+      // make sure that you are aborting useless requests
+      // because it is possible to switch between months pretty quickly
+      requestAbortController.current.abort();
+    }
+
+    setIsLoading(true);
+    setHighlightedDays([]);
+    fetchHighlightedDays(date);
+  };
+
+  return (
+    <>
+      <button className="CartBtn" id={product.id} onClick={handleOpen}>
+        <span className="IconContainer">
+          <StyledIcon src={ticket} alt="Ticket" className="ticket" />
+        </span>
+        <p className="darkText">Book Now!</p>
+      </button>
+      <Modal
+        style={{ overflow: "scroll" }}
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <StyledModal>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <StyledH2>From</StyledH2>
+            <DateCalendar
+              value={fromValue}
+              onChange={(newValue) => handleNewFromValue(newValue)}
+              loading={isLoading}
+              onMonthChange={handleMonthChange}
+              slots={{
+                day: ServerDay,
+              }}
+              slotProps={{
+                day: {
+                  highlightedDays,
+                },
+              }}
+            />
+            <StyledH2>To</StyledH2>
+            <DateCalendar
+              value={toValue}
+              onChange={(newValue) => handleNewToValue(newValue)}
+              loading={isLoading}
+              onMonthChange={handleMonthChange}
+              slots={{
+                day: ServerDay,
+              }}
+              slotProps={{
+                day: {
+                  highlightedDays,
+                },
+              }}
+            />
+          </LocalizationProvider>
+
+          <Fab
+            variant="extended"
+            size="medium"
+            color="primary"
+            style={{ width: "80%" }}
+            onClick={handleBooking}
+          >
+            Book!
+          </Fab>
+          <Fab
+            variant="extended"
+            size="medium"
+            color="text.secondary"
+            style={{ width: "80%", marginTop: "1rem" }}
+            onClick={handleClose}
+          >
+            Cancel
+          </Fab>
+        </StyledModal>
+      </Modal>
+    </>
   );
 }
 

@@ -67,8 +67,8 @@ const StyledRating = styled.div`
 
 const StyledRatingP = styled.p`
   position: absolute;
-  color: white;
-  font-weight: 600;
+  color: black;
+  font-weight: 900;
   z-index: 1;
 `;
 
@@ -84,7 +84,7 @@ const StyledPrice = styled.p`
   font-size: 1.3rem;
   margin: 0;
   max-width: 35%;
-  overflow: hidden;
+  overflow: auto;
   color: rgba(255, 255, 255, 0.8);
 `;
 
