@@ -109,11 +109,15 @@ const StyledH2 = styled.h2`
   margin-top: 0;
   color: white;
 
-  @media (max-width: 1000px) {
+  @media (max-width: 768px) {
     font-size: 2.4rem;
+    width: 90vw;
+    text-align: center;
   }
 
   @media (max-width: 499px) {
+    width: 90vw;
+    text-align: center;
     font-size: 1.8rem;
     margin-bottom: 2.5rem;
   }

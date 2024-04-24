@@ -81,18 +81,6 @@ function Nav() {
       </StyledNavItems>
 
       <StyledNavItems>
-        <Link to="/cart">
-          {/* Display cart count */}
-          <StyledCartCount id="cartCount">{cartCount}</StyledCartCount>
-          <img
-            src={shoppingCart}
-            className="navIcon shoppingCart"
-            title="Shopping Cart"
-            alt="shoppingCart"
-          />
-        </Link>
-      </StyledNavItems>
-      <StyledNavItems>
         <Link to="/">
           <img
             src={profile}

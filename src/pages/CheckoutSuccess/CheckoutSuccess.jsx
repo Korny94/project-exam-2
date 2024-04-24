@@ -6,6 +6,10 @@ import homeBtn from "../../assets/logo.png";
 import { Link } from "react-router-dom";
 import ScrollToTop from "../../Components/ScrollToTop/ScrollToTop";
 
+const StyledH3 = styled.h3`
+  opacity: 0.8;
+`;
+
 const StyledDiv = styled.div`
   width: 100%;
   display: flex;
@@ -34,11 +38,6 @@ function CheckoutSuccess() {
   const [loader, setLoader] = useState(true);
   ScrollToTop();
   function clearCart() {
-    localStorage.setItem("cart", JSON.stringify([]));
-    const cartCount = document.getElementById("cartCount");
-    if (cartCount.innerHTML !== 0) {
-      cartCount.innerHTML = 0;
-    }
     setInterval(() => {
       setLoader(false);
     }, 1500);
@@ -53,11 +52,11 @@ function CheckoutSuccess() {
             <div className="thankCard">
               <b>
                 <StyledContent>
-                  <h1>Thank you for your purchase!</h1>
-                  <h3>
-                    Your order has been placed successfully. You will receive an
-                    email confirmation shortly.
-                  </h3>
+                  <h1>Thank you for your booking!</h1>
+                  <StyledH3>
+                    Your booking has been placed successfully. You will receive
+                    an email confirmation shortly.
+                  </StyledH3>
                   <StyledImg src={homeBtn} alt="Home Button" />
                 </StyledContent>
               </b>

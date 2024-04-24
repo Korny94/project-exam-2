@@ -1,8 +1,9 @@
 import "./AddToCart.scss";
-import ticket from "../../assets/ticket.svg";
+import ticket from "../../assets/ticket.png";
 import styled from "styled-components";
 
 import * as React from "react";
+import { useNavigate } from "react-router-dom";
 import Fab from "@mui/material/Fab";
 import Modal from "@mui/material/Modal";
 
@@ -50,12 +51,13 @@ const StyledH2 = styled.h2`
 `;
 
 function AddToCart({ product }) {
+  const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const [fromValue, setFromValue] = React.useState(dayjs());
-  const [toValue, setToValue] = React.useState(dayjs().add(1, "day"));
+  const [fromValue, setFromValue] = React.useState(null);
+  const [toValue, setToValue] = React.useState(null);
 
   const handleNewFromValue = (newValue) => {
     setFromValue(newValue);
@@ -68,16 +70,15 @@ function AddToCart({ product }) {
   };
 
   const handleBooking = () => {
-    if (fromValue.isAfter(toValue)) {
+    if (fromValue === null) {
+      alert("Please select a 'from' date.");
+    } else if (toValue === null) {
+      alert("Please select a 'to' date.");
+    } else if (fromValue.isAfter(toValue)) {
       alert("The 'from' date must be before the 'to' date.");
     } else if (fromValue.isSame(toValue, "day")) {
       alert("The 'from' date cannot be the same as the 'to' date.");
     } else {
-      if (localStorage.getItem("bookings") === null) {
-        localStorage.setItem("bookings", JSON.stringify([]));
-      }
-      const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
-
       // Create a new booking object
       const newBooking = {
         from: getAdjustedISOString(fromValue),
@@ -85,11 +86,7 @@ function AddToCart({ product }) {
         productId: product.id,
       };
 
-      // Push the new booking object into the bookings array
-      bookings.push(newBooking);
-
-      // Update the localStorage with the updated bookings array
-      localStorage.setItem("bookings", JSON.stringify(bookings));
+      navigate("/checkoutSuccess", { booking: newBooking });
 
       handleClose();
     }
