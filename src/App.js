@@ -6,15 +6,16 @@ import Product from "./pages/Product/Product.jsx";
 import RouteNotFound from "./pages/RouteNotFound/RouteNotFound.jsx";
 import Layout from "./Components/Layouts/Layout.jsx";
 import CheckoutSuccess from "./pages/CheckoutSuccess/CheckoutSuccess.jsx";
+import Profile from "./pages/Profile/Profile.jsx";
 
 function App() {
   return (
     <div className="App">
       <Routes>
-        <Route index element={<Login />} />
-
         <Route path="/" element={<Layout />}>
-          <Route path="home" element={<Home />} />
+          <Route index element={<Home />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="login" element={<Login />} />
           <Route path="product" element={<Product />} />
           <Route path="checkoutSuccess" element={<CheckoutSuccess />} />
           <Route path="*" element={<RouteNotFound />} />

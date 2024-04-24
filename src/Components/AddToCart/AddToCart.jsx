@@ -70,7 +70,9 @@ function AddToCart({ product }) {
   };
 
   const handleBooking = () => {
-    if (fromValue === null) {
+    if (localStorage.getItem("user") === null) {
+      navigate("/login");
+    } else if (fromValue === null) {
       alert("Please select a 'from' date.");
     } else if (toValue === null) {
       alert("Please select a 'to' date.");

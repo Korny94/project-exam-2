@@ -1,9 +1,7 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import { useState, useEffect } from "react"; // Import useState and useEffect
+import { useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
-import shoppingCart from "../../assets/shoppingCart.png";
-import contact from "../../assets/contact.png";
 import profile from "../../assets/profile.png";
 
 const StyledNavItems = styled.div`
@@ -46,31 +44,16 @@ const StyledNav = styled.nav`
   padding: 2rem 1rem 1rem 1rem;
 `;
 
-const StyledCartCount = styled.div`
-  position: absolute;
-  top: -5px;
-  right: -5px;
-  background-color: red;
-  color: white;
-  border-radius: 50%;
-  width: 28px;
-  height: 28px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 15px; // Adjust the font size to fit within the smaller count container
-`;
-
 function Nav() {
-  const [cartCount, setCartCount] = useState(0); // State to manage cart count
+  const navigate = useNavigate(); // Use the useNavigation hook from react-router-dom
 
-  useEffect(() => {
-    // Update cart count when component mounts and when cart changes
-    const cart = JSON.parse(localStorage.getItem("cart"));
-    if (cart) {
-      setCartCount(cart.length);
+  const handleProfileClick = () => {
+    if (localStorage.getItem("user") === null) {
+      navigate("/login");
+    } else {
+      navigate("/profile");
     }
-  }, []); // Empty dependency array to run the effect only once
+  };
 
   return (
     <StyledNav>
@@ -81,14 +64,14 @@ function Nav() {
       </StyledNavItems>
 
       <StyledNavItems>
-        <Link to="/">
-          <img
-            src={profile}
-            className="navIcon"
-            title="Profile"
-            alt="profile"
-          />
-        </Link>
+        <img
+          src={profile}
+          className="navIcon"
+          title="Profile"
+          alt="profile"
+          onClick={handleProfileClick}
+          style={{ marginBottom: "5px" }}
+        />
       </StyledNavItems>
     </StyledNav>
   );

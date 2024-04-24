@@ -12,7 +12,7 @@ html *::-webkit-scrollbar-thumb {
 }
 
 html {
-  min-height: 100vh;
+  min-height: 90vh;
   width: 100vw;
   background: #212121 !important;
   overflow-y: scroll;
@@ -41,17 +41,4 @@ nav {
 .navIcon {
   width: 20px;
   padding: 1rem 2rem;
-}
-
-@media screen and (max-width: 768px) {
-  .navIcon {
-    transform: scale(0.9);
-    padding: 0.8rem 1.6rem 0.7rem;
-  }
-  #cartCount {
-    margin-left: 2.5rem;
-    width: 20px;
-    height: 20px;
-    font-size: 0.9rem;
-  }
 }
