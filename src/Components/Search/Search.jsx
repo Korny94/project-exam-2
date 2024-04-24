@@ -3,6 +3,7 @@ import "./Search.scss";
 import styled from "styled-components";
 import ProductCard from "../ProductCard/ProductCard";
 import Loader from "../Loader/Loader";
+const API_ALL_VENUES = process.env.REACT_APP_API_ALL_VENUES;
 
 const StyledP = styled.p`
   font-size: 1.5rem;
@@ -40,21 +41,18 @@ function Search() {
 
   useEffect(() => {
     // Fetch products from the API
-    fetch("https://v2.api.noroff.dev/holidaze/venues?&_bookings=true")
+    fetch(API_ALL_VENUES)
       .then((response) => response.json())
       .then((data) => {
         setProducts(data.data);
         setFilteredSuggestions(data.data); // Initialize filteredSuggestions with all products
-      console.log(data.data)
-
+        console.log(data.data);
       })
       .catch((error) => {
         console.error("Error fetching products:", error);
         setFetchError(true);
       });
   }, []);
-
-
 
   const handleInputChange = (event) => {
     const inputValue = event.target.value;
