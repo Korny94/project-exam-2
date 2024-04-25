@@ -9,6 +9,7 @@ import parking from "../../assets/parking.png";
 import pets from "../../assets/pets.png";
 import breakfast from "../../assets/breakfast.png";
 import noImage from "../../assets/noImage.png";
+import dayjs from "dayjs";
 
 const StyledImg = styled.img`
   width: 95%;
@@ -98,7 +99,27 @@ function ProductCard({ product }) {
   const [imageLoaded, setImageLoaded] = useState(false);
 
   const getProductInfo = (product) => {
-    localStorage.setItem("productInfo", JSON.stringify(product));
+    // Remove the time portion from dateFrom and dateTo in each booking
+    const cleanBookings = product.bookings.map((booking) => ({
+      // Adjust the UTC time to local time before truncating the time portion
+      dateFrom: dayjs(booking.dateFrom)
+        .subtract(dayjs(booking.dateFrom).utcOffset(), "minute")
+        .startOf("day")
+        .format("YYYY-MM-DD"),
+      dateTo: dayjs(booking.dateTo)
+        .subtract(dayjs(booking.dateTo).utcOffset(), "minute")
+        .startOf("day")
+        .format("YYYY-MM-DD"),
+    }));
+
+    // Create a new object with cleaned bookings
+    const cleanedProduct = {
+      ...product,
+      bookings: cleanBookings,
+    };
+
+    localStorage.setItem("productInfo", JSON.stringify(cleanedProduct));
+    localStorage.setItem("product", JSON.stringify(product));
   };
 
   return (

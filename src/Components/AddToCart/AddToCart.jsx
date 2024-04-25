@@ -21,22 +21,6 @@ import Select from "@mui/material/Select";
 const ALL_BOOKINGS = process.env.REACT_APP_API_ALL_BOOKINGS;
 console.log(ALL_BOOKINGS);
 
-// function ServerDay(props) {
-//   const { highlightedDays = [], day, outsideCurrentMonth, ...other } = props;
-
-//   const isTodayOrLater = dayjs(day).isAfter(dayjs(), "day"); // Check if the day is today or later
-//   const isDisabled = !isTodayOrLater || highlightedDays.includes(day.date()); // Check if the day is disabled
-
-//   return (
-//     <PickersDay
-//       {...other}
-//       outsideCurrentMonth={outsideCurrentMonth}
-//       day={day}
-//       disabled={isDisabled} // Disable the day if it's included in highlightedDays or it's not today or later
-//     />
-//   );
-// }
-
 function ServerDay(props) {
   const { highlightedDays = [], day, outsideCurrentMonth, ...other } = props;
 
@@ -80,27 +64,153 @@ function AddToCart({ product }) {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  // const [fromValue, setFromValue] = React.useState(null);
-  // const [toValue, setToValue] = React.useState(null);
-
   const [guests, setGuests] = React.useState(1);
 
   const handleGuestChange = (event) => {
     setGuests(event.target.value);
   };
 
-  // const handleNewFromValue = (newValue) => {
-  //   setFromValue(newValue);
-  //   console.log(newValue, getAdjustedISOString(newValue));
-  // };
-
-  // const handleNewToValue = (newValue) => {
-  //   setToValue(newValue);
-  //   console.log(newValue, getAdjustedISOString(newValue));
-  // };
-
   const key = JSON.parse(localStorage.getItem("key"));
   const user = JSON.parse(localStorage.getItem("user"));
+
+  const handleBooking = () => {
+    if (localStorage.getItem("user") === null) {
+      navigate("/login");
+    } else if (fromValue === null) {
+      alert("Please select a 'from' date.");
+    } else if (toValue === null) {
+      alert("Please select a 'to' date.");
+    } else if (fromValue.isAfter(toValue)) {
+      alert("The 'from' date must be before the 'to' date.");
+    } else if (fromValue.isSame(toValue, "day")) {
+      alert("The 'from' date cannot be the same as the 'to' date.");
+    } else {
+      // Check if any dates between fromValue and toValue are disabled or highlighted
+      const datesInRange = [];
+      let currentDate = dayjs(fromValue).startOf("day"); // Ensure consistent treatment of start date without timezone adjustment
+      const endOfDayToValue = dayjs(toValue).endOf("day"); // Adjusted to get the end of the day for toValue
+
+      while (
+        currentDate.isBefore(endOfDayToValue) || // Adjusted condition to include the end of the day for toValue
+        currentDate.isSame(endOfDayToValue, "day")
+      ) {
+        datesInRange.push(currentDate.format("YYYY-MM-DD"));
+        currentDate = currentDate.add(1, "day");
+      }
+
+      console.log("Dates in range:", datesInRange);
+
+      // Convert allBookedDates to a Set for faster lookup
+      const bookedDatesSet = new Set(allBookedDates);
+
+      // Initialize a variable to track if any conflicting dates are found
+      let conflictFound = false;
+
+      // Loop through each date in datesInRange and check if it's in bookedDatesSet
+      datesInRange.forEach((isoDateString) => {
+        // Iterate over ISO string dates
+        if (bookedDatesSet.has(isoDateString)) {
+          conflictFound = true;
+          // If a conflicting date is found, you can handle it here
+          // For example, you can display an alert message or log it
+          console.log(`Conflict found on date: ${isoDateString}`);
+        }
+      });
+
+      // If conflictFound is true, there are conflicting dates; otherwise, there are none
+      if (conflictFound) {
+        alert("Some dates between 'from' and 'to' are already booked.");
+        // Optionally, you can return or handle further execution of the booking process
+        return;
+      }
+
+      // Create a new booking object
+      const newBooking = {
+        dateFrom: getAdjustedISOString(fromValue), // Required - Instance of new Date()
+        dateTo: getAdjustedISOString(toValue), // Required - Instance of new Date()
+        guests: guests, // Required
+        venueId: product.id, // Required - The id of the venue to book
+      };
+
+      console.log("New booking:", newBooking);
+
+      // Send a POST request to the API to create a new booking
+      fetch(ALL_BOOKINGS, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.accessToken}`,
+          "X-Noroff-API-Key": key.key,
+        },
+        body: JSON.stringify(newBooking),
+      })
+        .then((response) => {
+          return response.json();
+        })
+
+        .then((data) => {
+          console.log("Booking created:", data);
+          if (data.errors) {
+            alert(data.errors[0].message);
+          } else {
+            product.bookings.push(data.data);
+
+            // Store the cleaned product in localStorage
+            localStorage.setItem("productInfo", JSON.stringify(product));
+            navigate("/checkoutSuccess");
+          }
+        })
+
+        .catch((error) => {
+          console.error("Error creating booking:", error);
+        });
+    }
+  };
+
+  const [highlightedDays, setHighlightedDays] = React.useState([]);
+
+  const getAdjustedISOString = (date) => {
+    const offsetMinutes = date.utcOffset();
+    const adjustedDate = date.add(offsetMinutes, "minute");
+    return adjustedDate.toISOString();
+  };
+
+  const getAllDatesBetween = (startDate, endDate) => {
+    const dates = [];
+    let currentDate = dayjs(startDate).startOf("day");
+    const end = dayjs(endDate).startOf("day");
+
+    const timezoneOffset = new Date(startDate).getTimezoneOffset() * 60000;
+
+    while (currentDate.isBefore(end, "day") || currentDate.isSame(end, "day")) {
+      // Adjust the currentDate if the time is 22:00:00.000Z or later
+      if (currentDate.hour() >= 22) {
+        currentDate = currentDate.subtract(1, "day").startOf("day");
+      }
+
+      // Apply timezone offset
+      currentDate = currentDate.subtract(timezoneOffset, "millisecond");
+
+      const formattedDate = currentDate.format("YYYY-MM-DD");
+      dates.push(formattedDate);
+
+      // Increment currentDate by one day, but only if it's not already the end date
+      if (!currentDate.isSame(end, "day")) {
+        currentDate = currentDate.add(1, "day").startOf("day");
+      } else {
+        break; // Exit the loop if currentDate is the same as the end date
+      }
+    }
+
+    return dates;
+  };
+
+  const allBookedDates = product.bookings.reduce((dates, booking) => {
+    const bookingDates = getAllDatesBetween(booking.dateFrom, booking.dateTo);
+    return dates.concat(bookingDates);
+  }, []);
+
+  console.log("All booked dates:", allBookedDates);
 
   const [fromValue, setFromValue] = React.useState(null);
   const [toValue, setToValue] = React.useState(null);
@@ -122,17 +232,15 @@ function AddToCart({ product }) {
   ) => {
     const controller = new AbortController();
 
-    // Set loading state to true while fetching data
-    setIsLoading(true);
-
     // Filter the bookings array to get the bookings within the current month
     const bookingsInMonth = product.bookings.filter((booking) => {
-      const bookingDateFrom = dayjs(booking.dateFrom);
-      const bookingDateTo = dayjs(booking.dateTo);
+      const bookingDateFrom = dayjs(booking.dateFrom).startOf("day"); // Truncate time part
+      const bookingDateTo = dayjs(booking.dateTo).startOf("day"); // Truncate time part
+
       return (
-        bookingDateFrom.isSame(date, "month") ||
-        bookingDateTo.isSame(date, "month") ||
-        (bookingDateFrom.isBefore(date, "month") &&
+        (bookingDateFrom.isSame(date, "month") ||
+          bookingDateFrom.isBefore(date, "month")) &&
+        (bookingDateTo.isSame(date, "month") ||
           bookingDateTo.isAfter(date, "month"))
       );
     });
@@ -146,13 +254,13 @@ function AddToCart({ product }) {
 
         // Loop through each day within the booking range and add it to the array
         for (
-          let date = bookingDateFrom;
-          date.isBefore(bookingDateTo.subtract(1, "day")) ||
-          date.isSame(bookingDateTo.subtract(1, "day"), "day");
-          date = date.add(1, "day")
+          let currentDate = bookingDateFrom;
+          currentDate.isBefore(bookingDateTo) ||
+          currentDate.isSame(bookingDateTo, "day"); // Adjusted condition to include dateTo
+          currentDate = currentDate.add(1, "day")
         ) {
-          if (date.isSame(date, "month")) {
-            daysInRange.push(date.date());
+          if (currentDate.isSame(date, "month")) {
+            daysInRange.push(currentDate.date());
           }
         }
 
@@ -161,9 +269,9 @@ function AddToCart({ product }) {
       []
     );
 
-    // Set loading state to false and update state with highlighted days
-    setIsLoading(false);
     setHighlightedDays(daysToHighlight);
+    setIsLoading(false);
+    console.log("Highlighted days:", daysToHighlight);
 
     requestAbortController.current = controller;
   };
@@ -200,7 +308,7 @@ function AddToCart({ product }) {
     setIsLoadingFrom(true);
     setHighlightedDaysFrom([]);
     fetchHighlightedDays(
-      date,
+      dayjs(date).startOf("month"), // Adjust to start of month
       setIsLoadingFrom,
       setHighlightedDaysFrom,
       requestAbortControllerFrom
@@ -217,257 +325,12 @@ function AddToCart({ product }) {
     setIsLoadingTo(true);
     setHighlightedDaysTo([]);
     fetchHighlightedDays(
-      date,
+      dayjs(date).startOf("month"), // Adjust to start of month
       setIsLoadingTo,
       setHighlightedDaysTo,
       requestAbortControllerTo
     );
   };
-
-  const handleBooking = () => {
-    if (localStorage.getItem("user") === null) {
-      navigate("/login");
-    } else if (fromValue === null) {
-      alert("Please select a 'from' date.");
-    } else if (toValue === null) {
-      alert("Please select a 'to' date.");
-    } else if (fromValue.isAfter(toValue)) {
-      alert("The 'from' date must be before the 'to' date.");
-    } else if (fromValue.isSame(toValue, "day")) {
-      alert("The 'from' date cannot be the same as the 'to' date.");
-    } else {
-      console.log("Highlighted days:", highlightedDays);
-      // Check if any dates between fromValue and toValue are disabled or highlighted
-      const datesInRange = [];
-      let currentDate = fromValue.startOf("day");
-      while (
-        currentDate.isBefore(dayjs(toValue).startOf("day")) ||
-        currentDate.isSame(dayjs(toValue).startOf("day"), "day")
-      ) {
-        datesInRange.push(currentDate);
-        currentDate = currentDate.add(1, "day");
-      }
-
-      const isAnyDateDisabledOrHighlighted = datesInRange.some((date) =>
-        highlightedDays.includes(date.date())
-      );
-
-      if (isAnyDateDisabledOrHighlighted) {
-        alert("Some dates between 'from' and 'to' are already booked.");
-        return; // Prevent further execution of the booking process
-      }
-
-      // Create a new booking object
-      const newBooking = {
-        dateFrom: getAdjustedISOString(fromValue), // Required - Instance of new Date()
-        dateTo: getAdjustedISOString(toValue), // Required - Instance of new Date()
-        guests: guests, // Required
-        venueId: product.id, // Required - The id of the venue to book
-      };
-
-      console.log("New booking:", newBooking);
-
-      // Send a POST request to the API to create a new booking
-      fetch(ALL_BOOKINGS, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${user.accessToken}`,
-          "X-Noroff-API-Key": key.key,
-        },
-        body: JSON.stringify(newBooking),
-      })
-        .then((response) => {
-          if (!response.ok) {
-            alert("An error occurred. Please try again.");
-          }
-          return response.json();
-        })
-
-        .then((data) => {
-          console.log("Booking created:", data);
-
-          product.bookings.push(data.data);
-          localStorage.setItem("productInfo", JSON.stringify(product));
-          navigate("/checkoutSuccess");
-        })
-
-        .catch((error) => {
-          console.error("Error creating booking:", error);
-        });
-    }
-  };
-
-  // const handleBooking = () => {
-  //   if (localStorage.getItem("user") === null) {
-  //     navigate("/login");
-  //   } else if (fromValue === null) {
-  //     alert("Please select a 'from' date.");
-  //   } else if (toValue === null) {
-  //     alert("Please select a 'to' date.");
-  //   } else if (fromValue.isAfter(toValue)) {
-  //     alert("The 'from' date must be before the 'to' date.");
-  //   } else if (fromValue.isSame(toValue, "day")) {
-  //     alert("The 'from' date cannot be the same as the 'to' date.");
-  //   } else {
-  //     // Create a new booking object
-  //     const newBooking = {
-  //       dateFrom: getAdjustedISOString(fromValue), // Required - Instance of new Date()
-  //       dateTo: getAdjustedISOString(toValue), // Required - Instance of new Date()
-  //       guests: guests, // Required
-  //       venueId: product.id, // Required - The id of the venue to book
-  //     };
-
-  //     console.log("New booking:", newBooking);
-
-  //     // Send a POST request to the API to create a new booking
-  //     fetch(ALL_BOOKINGS, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${user.accessToken}`,
-  //         "X-Noroff-API-Key": key.key,
-  //       },
-  //       body: JSON.stringify(newBooking),
-  //     })
-  //       .then((response) => {
-  //         if (!response.ok) {
-  //           alert("An error occurred. Please try again.");
-  //         }
-  //         return response.json();
-  //       })
-
-  //       .then((data) => {
-  //         console.log("Booking created:", data);
-
-  //         product.bookings.push(data.data);
-  //         localStorage.setItem("productInfo", JSON.stringify(product));
-  //         navigate("/checkoutSuccess");
-  //       })
-
-  //       .catch((error) => {
-  //         console.error("Error creating booking:", error);
-  //       });
-  //   }
-  // };
-
-  // Function to get ISO string with adjusted time zone offset
-  const getAdjustedISOString = (date) => {
-    const offsetMinutes = date.utcOffset();
-    const adjustedDate = date.add(offsetMinutes, "minute");
-    return adjustedDate.toISOString();
-  };
-
-  // const requestAbortController = React.useRef(null);
-  // const [isLoading, setIsLoading] = React.useState(false);
-  const [highlightedDays, setHighlightedDays] = React.useState([1, 2, 15]);
-
-  // const fetchHighlightedDays = (date) => {
-  //   const controller = new AbortController();
-
-  //   // Filter the bookings array to get the bookings within the current month
-  //   const bookingsInMonth = product.bookings.filter((booking) => {
-  //     const bookingDateFrom = dayjs(booking.dateFrom);
-  //     const bookingDateTo = dayjs(booking.dateTo);
-  //     return (
-  //       bookingDateFrom.isSame(date, "month") ||
-  //       bookingDateTo.isSame(date, "month") ||
-  //       (bookingDateFrom.isBefore(date, "month") &&
-  //         bookingDateTo.isAfter(date, "month"))
-  //     );
-  //   });
-
-  //   // Generate an array of days to highlight for each booking
-  //   const daysToHighlight = bookingsInMonth.reduce(
-  //     (highlightedDays, booking) => {
-  //       const bookingDateFrom = dayjs(booking.dateFrom);
-  //       const bookingDateTo = dayjs(booking.dateTo);
-  //       const daysInRange = [];
-
-  //       // Loop through each day within the booking range and add it to the array
-  //       for (
-  //         let date = bookingDateFrom;
-  //         date.isBefore(bookingDateTo) || date.isSame(bookingDateTo, "day");
-  //         date = date.add(1, "day")
-  //       ) {
-  //         if (date.isSame(date, "month")) {
-  //           daysInRange.push(date.date());
-  //         }
-  //       }
-
-  //       return [...highlightedDays, ...daysInRange];
-  //     },
-  //     []
-  //   );
-
-  //   setHighlightedDays(daysToHighlight);
-  //   setIsLoading(false);
-
-  //   requestAbortController.current = controller;
-  // };
-
-  // const fetchHighlightedDays = (date) => {
-  //   const controller = new AbortController();
-
-  //   // Filter the bookings array to get the bookings within the current month
-  //   const bookingsInMonth = product.bookings.filter((booking) => {
-  //     const bookingDateFrom = dayjs(booking.dateFrom);
-  //     const bookingDateTo = dayjs(booking.dateTo);
-  //     return (
-  //       bookingDateFrom.isSame(date, "month") ||
-  //       bookingDateTo.isSame(date, "month") ||
-  //       (bookingDateFrom.isBefore(date, "month") &&
-  //         bookingDateTo.isAfter(date, "month"))
-  //     );
-  //   });
-
-  //   // Generate an array of days to highlight for each booking
-  //   const daysToHighlight = bookingsInMonth.reduce(
-  //     (highlightedDays, booking) => {
-  //       const bookingDateFrom = dayjs(booking.dateFrom);
-  //       const bookingDateTo = dayjs(booking.dateTo);
-  //       const daysInRange = [];
-
-  //       // Loop through each day within the booking range and add it to the array
-  //       for (
-  //         let date = bookingDateFrom;
-  //         date.isBefore(bookingDateTo.subtract(1, "day")) ||
-  //         date.isSame(bookingDateTo.subtract(1, "day"), "day");
-  //         date = date.add(1, "day")
-  //       ) {
-  //         if (date.isSame(date, "month")) {
-  //           daysInRange.push(date.date());
-  //         }
-  //       }
-
-  //       return [...highlightedDays, ...daysInRange];
-  //     },
-  //     []
-  //   );
-
-  //   setHighlightedDays(daysToHighlight);
-  //   setIsLoading(false);
-
-  //   requestAbortController.current = controller;
-  // };
-
-  // React.useEffect(() => {
-  //   fetchHighlightedDays();
-  //   // abort request on unmount
-  //   return () => requestAbortController.current?.abort();
-  // }, []);
-
-  // const handleMonthChange = (date) => {
-  //   if (requestAbortController.current) {
-  //     // make sure that you are aborting useless requests
-  //     // because it is possible to switch between months pretty quickly
-  //     requestAbortController.current.abort();
-  //   }
-
-  //   setIsLoading(true);
-  //   setHighlightedDays([]);
-  //   fetchHighlightedDays(date);
-  // };
 
   return (
     <>
@@ -485,39 +348,6 @@ function AddToCart({ product }) {
         aria-describedby="modal-modal-description"
       >
         <StyledModal>
-          {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <StyledH2>From</StyledH2>
-            <DateCalendar
-              value={fromValue}
-              onChange={(newValue) => handleNewFromValue(newValue)}
-              loading={isLoading}
-              onMonthChange={handleMonthChange}
-              slots={{
-                day: ServerDay,
-              }}
-              slotProps={{
-                day: {
-                  highlightedDays,
-                },
-              }}
-            />
-            <StyledH2>To</StyledH2>
-            <DateCalendar
-              value={toValue}
-              onChange={(newValue) => handleNewToValue(newValue)}
-              loading={isLoading}
-              onMonthChange={handleMonthChange}
-              slots={{
-                day: ServerDay,
-              }}
-              slotProps={{
-                day: {
-                  highlightedDays,
-                },
-              }}
-            />
-          </LocalizationProvider> */}
-
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <StyledH2>From</StyledH2>
             <DateCalendar
