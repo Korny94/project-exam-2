@@ -8,6 +8,8 @@ import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import trash from "../../assets/trash.png";
+import Modal from "@mui/material/Modal";
+import bookingsIcon from "../../assets/ticket.png";
 
 import logOut from "../../assets/logOut.png";
 import { useNavigate } from "react-router-dom";
@@ -16,6 +18,18 @@ import Loader from "../../Components/Loader/Loader";
 const ALL_PROFILES = process.env.REACT_APP_API_ALL_PROFILES;
 const ALL_BOOKINGS = process.env.REACT_APP_API_ALL_BOOKINGS;
 const ALL_VENUES = process.env.REACT_APP_API_ALL_VENUES;
+
+const StyledModal = styled.div`
+  width: 80vw;
+  max-width: 400px;
+  background-color: white;
+  margin: 1rem auto;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+`;
 
 const StyledImgDiv = styled.div`
   display: flex;
@@ -107,7 +121,7 @@ const StyledBookingImg = styled.img`
 `;
 
 const StyledH3 = styled.h3`
-  width: 110px;
+  width: 90px;
   overflow-x: auto;
   overflow-y: hidden;
 `;
@@ -115,6 +129,15 @@ const StyledH3 = styled.h3`
 const StyledTextField = styled(TextField)`
   background-color: white;
   border-radius: 5px;
+`;
+
+const StyledBookingsIcon = styled.img`
+  width: 22.5px;
+  object-fit: cover;
+  position: absolute;
+  margin-left: 175px;
+  cursor: pointer;
+  filter: invert(1);
 `;
 
 const StyledEditIcon = styled.img`
@@ -131,6 +154,17 @@ const StyledTrashIcon = styled.img`
   position: absolute;
   margin-left: 255px;
   opacity: 0.6;
+`;
+
+const StyledVenueBooking = styled.div`
+  box-shadow: 0px 0px 5px 1px #1f4c65;
+  border-radius: 30px;
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-content: space-between;
+  background-color: #212121;
 `;
 
 function Login() {
@@ -162,6 +196,31 @@ function Login() {
   const [breakfast, setBreakfast] = useState(false);
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  const [openTwo, setOpenTwo] = React.useState(false);
+  const handleOpenTwo = () => setOpenTwo(true);
+  const handleCloseTwo = () => setOpenTwo(false);
+  const [editAddress, setEditAddress] = useState("");
+  const [editCity, setEditCity] = useState("");
+  const [editZip, setEditZip] = useState("");
+  const [editCountry, setEditCountry] = useState("");
+  const [editContinent, setEditContinent] = useState("");
+  const [editImgUrl, setEditImgUrl] = useState("");
+  const [editDescription, setEditDescription] = useState("");
+  const [editPrice, setEditPrice] = useState("");
+  const [editMaxGuests, setEditMaxGuests] = useState("");
+  const [editRating, setEditRating] = useState("");
+  const [editWifi, setEditWifi] = useState(false);
+  const [editParking, setEditParking] = useState(false);
+  const [editPets, setEditPets] = useState(false);
+  const [editBreakfast, setEditBreakfast] = useState(false);
+  const [editLatitude, setEditLatitude] = useState("");
+  const [editLongitude, setEditLongitude] = useState("");
+  const [editVenueName, setEditVenueName] = useState("");
+  const [venueId, setVenueId] = useState("");
+  const [myVenues, setMyVenues] = useState([]);
 
   const handleCreateVenue = () => {
     console.log(
@@ -222,8 +281,8 @@ function Login() {
           zip: zip,
           country: country,
           continent: continent,
-          latitude: parseFloat(latitude) || 0,
-          longitude: parseFloat(longitude) || 0,
+          lat: parseFloat(latitude) || 0,
+          lng: parseFloat(longitude) || 0,
         },
       }),
     })
@@ -390,10 +449,164 @@ function Login() {
 
   const handleDeleteVenue = (venueId) => {
     console.log("Delete venue", venueId);
+
+    fetch(`${ALL_VENUES}${venueId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${user.accessToken}`,
+        "X-Noroff-API-Key": key.key,
+      },
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Network response was not ok");
+        }
+        // Check if response status is 204 No Content, indicating successful deletion without content
+        if (res.status === 204) {
+          // Return an empty object to avoid parsing empty JSON
+          return {};
+        }
+        return res.json();
+      })
+      .then((data) => {
+        // If you reach this point, the deletion was successful
+        alert("Venue deleted successfully!");
+        window.location.reload();
+      })
+      .catch((error) => {
+        // Check if the error is due to network issues or server errors
+        if (
+          error instanceof SyntaxError ||
+          error.message === "Network response was not ok"
+        ) {
+          console.error("Error deleting venue:", error);
+          alert(
+            "An error occurred while deleting the venue. Please try again later."
+          );
+        } else {
+          // If it's another type of error, propagate it
+          throw error;
+        }
+      });
   };
 
-  const handleEditVenue = (venueId) => {
-    console.log("Edit venue", venueId);
+  const handleEditClick = (venue) => {
+    setOpen(true);
+    setVenueId(venue.id);
+    setEditVenueName(venue.name);
+    setEditDescription(venue.description);
+    setEditPrice(venue.price);
+    setEditMaxGuests(venue.maxGuests);
+    setEditRating(venue.rating);
+    setEditWifi(venue.meta.wifi);
+    setEditParking(venue.meta.parking);
+    setEditPets(venue.meta.pets);
+    setEditBreakfast(venue.meta.breakfast);
+    setEditAddress(venue.location.address);
+    setEditCity(venue.location.city);
+    setEditZip(venue.location.zip);
+    setEditCountry(venue.location.country);
+    setEditContinent(venue.location.continent);
+    setEditLatitude(venue.location.lat);
+    setEditLongitude(venue.location.lng);
+    setEditImgUrl(venue.media[0].url);
+  };
+
+  const handleEditVenue = () => {
+    console.log(
+      editAddress,
+      editCity,
+      editZip,
+      editCountry,
+      editContinent,
+      editImgUrl,
+      editDescription,
+      editPrice,
+      editMaxGuests,
+      editRating,
+      editWifi,
+      editParking,
+      editPets,
+      editBreakfast,
+      editLatitude,
+      editLongitude,
+      editVenueName,
+      venueId
+    );
+
+    fetch(`${ALL_VENUES}${venueId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${user.accessToken}`,
+        "X-Noroff-API-Key": key.key,
+      },
+
+      body: JSON.stringify({
+        name: editVenueName,
+        description: editDescription,
+        media: [
+          {
+            url:
+              editImgUrl ||
+              "https://cdn.pixabay.com/photo/2017/11/10/04/47/image-2935360_1280.png",
+            alt: "Venue Image",
+          },
+        ],
+        price: parseFloat(editPrice) || 0,
+        maxGuests: parseInt(editMaxGuests) || 1,
+        rating: parseFloat(editRating) || 0,
+        meta: {
+          wifi: editWifi,
+          parking: editParking,
+          pets: editPets,
+          breakfast: editBreakfast,
+        },
+        location: {
+          address: editAddress,
+          city: editCity,
+          zip: editZip,
+          country: editCountry,
+          continent: editContinent,
+          lat: parseFloat(editLatitude) || 0,
+          lng: parseFloat(editLongitude) || 0,
+        },
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.errors) {
+          console.log(data.errors);
+          alert(data.errors[0].message);
+        } else {
+          alert("Venue edited successfully!");
+          console.log(data.data);
+          setAddress("");
+          setCity("");
+          setZip("");
+          setCountry("");
+          setContinent("");
+          setImgUrl("");
+          setDescription("");
+          setPrice("");
+          setMaxGuests("");
+          setRating("");
+          setWifi(false);
+          setParking(false);
+          setPets(false);
+          setBreakfast(false);
+          setLatitude("");
+          setLongitude("");
+          setVenueName("");
+          setOpen(false);
+          window.location.reload();
+        }
+      });
+  };
+
+  const handleBookingsIconClick = (venue) => {
+    handleOpenTwo();
+    console.log(myVenues);
   };
 
   return (
@@ -456,10 +669,14 @@ function Login() {
                 onClick={() => fetchVenue(booking.venue.id)}
                 key={booking.id}
               >
-                <div style={{ display: "flex", gap: "1rem" }}>
+                <div
+                  style={{ display: "flex", gap: "1rem", alignItems: "center" }}
+                >
                   {" "}
                   <StyledBookingImg src={booking.venue.media[0].url} />
-                  <StyledH3>{booking.venue.name}</StyledH3>
+                  <StyledH3>
+                    {capitalizeFirstLetter(booking.venue.name)}
+                  </StyledH3>
                 </div>
                 {formatDate(booking.dateFrom)} <br />
                 {formatDate(booking.dateTo)}
@@ -473,18 +690,33 @@ function Login() {
               <StyledBooking>
                 <div
                   onClick={() => fetchVenue(venue.id)}
-                  style={{ display: "flex", gap: "1rem" }}
+                  style={{ display: "flex", gap: "1rem", alignItems: "center" }}
                 >
                   {" "}
                   <StyledBookingImg src={venue.media[0].url} />
-                  <StyledH3>{venue.name}</StyledH3>
+                  <StyledH3>{capitalizeFirstLetter(venue.name)}</StyledH3>
                 </div>
+                <StyledBookingsIcon
+                  onClick={() => {
+                    handleBookingsIconClick(venue);
+                    setMyVenues(venue.bookings);
+                  }}
+                  src={bookingsIcon}
+                  alt="Bookings"
+                  title="Bookings"
+                />
                 <StyledEditIcon
-                  onClick={() => handleEditVenue(venue.id)}
+                  onClick={() => {
+                    handleEditClick(venue);
+                  }}
                   src={editBtn}
                   alt="Edit"
                 />
-                <StyledTrashIcon src={trash} alt="Delete" />
+                <StyledTrashIcon
+                  src={trash}
+                  alt="Delete"
+                  onClick={() => handleDeleteVenue(venue.id)}
+                />
               </StyledBooking>
             ))}
           </StyledBookings>
@@ -514,7 +746,6 @@ function Login() {
               required
               id="outlined-number"
               placeholder="Price"
-              type="number"
               label="Price"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
@@ -523,7 +754,6 @@ function Login() {
               required
               id="outlined-number"
               placeholder="Max. Guests"
-              type="number"
               label="Max. Guests"
               value={maxGuests}
               onChange={(e) => setMaxGuests(e.target.value)}
@@ -590,7 +820,6 @@ function Login() {
             <StyledTextField
               id="outlined-number"
               placeholder="Rating"
-              type="number"
               label="Rating"
               value={rating}
               onChange={(e) => setRating(e.target.value)}
@@ -635,7 +864,6 @@ function Login() {
             <StyledTextField
               id="outlined-number"
               placeholder="Latitude"
-              type="number"
               label="Latitude"
               value={latitude}
               onChange={(e) => setLatitude(e.target.value)}
@@ -643,7 +871,6 @@ function Login() {
             <StyledTextField
               id="outlined-number"
               placeholder="Longitude"
-              type="number"
               label="Longitude"
               value={longitude}
               onChange={(e) => setLongitude(e.target.value)}
@@ -665,6 +892,207 @@ function Login() {
         alt="Log Out"
         title="Log out"
       />
+
+      <Modal
+        style={{ overflow: "scroll" }}
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <StyledModal>
+          <StyledBookings>
+            <StyledTextField
+              id="outlined-required"
+              placeholder="Name of Venue"
+              value={editVenueName}
+              onChange={(e) => setEditVenueName(e.target.value)}
+              label="Name of Venue"
+            />
+            <StyledTextField
+              id="outlined-multiline-static"
+              multiline
+              placeholder="Description *"
+              rows={4}
+              label="Description"
+              value={editDescription}
+              onChange={(e) => setEditDescription(e.target.value)}
+            />
+
+            <StyledTextField
+              id="outlined-number"
+              placeholder="Price"
+              label="Price"
+              value={editPrice}
+              onChange={(e) => setEditPrice(e.target.value)}
+            />
+            <StyledTextField
+              id="outlined-number"
+              placeholder="Max. Guests"
+              label="Max. Guests"
+              value={editMaxGuests}
+              onChange={(e) => setEditMaxGuests(e.target.value)}
+            />
+            <StyledTextField
+              id="outlined-required"
+              placeholder="Image URL"
+              label="Image URL"
+              value={editImgUrl}
+              onChange={(e) => setEditImgUrl(e.target.value)}
+            />
+            <FormControlLabel
+              control={<Checkbox />}
+              label="WiFi Included"
+              sx={{
+                "& .MuiSvgIcon-root": { fontSize: 28 },
+                backgroundColor: "white",
+                color: "black",
+                borderRadius: "5px",
+                margin: 0,
+              }}
+              checked={editWifi}
+              onChange={(e) => setEditWifi(e.target.checked)}
+            />
+            <FormControlLabel
+              control={<Checkbox />}
+              label="Parking Included"
+              sx={{
+                "& .MuiSvgIcon-root": { fontSize: 28 },
+                backgroundColor: "white",
+                color: "black",
+                borderRadius: "5px",
+                margin: 0,
+              }}
+              checked={editParking}
+              onChange={(e) => setEditParking(e.target.checked)}
+            />
+            <FormControlLabel
+              control={<Checkbox />}
+              label="Pets Allowed"
+              sx={{
+                "& .MuiSvgIcon-root": { fontSize: 28 },
+                backgroundColor: "white",
+                color: "black",
+                borderRadius: "5px",
+                margin: 0,
+              }}
+              checked={editPets}
+              onChange={(e) => setEditPets(e.target.checked)}
+            />
+            <FormControlLabel
+              control={<Checkbox />}
+              label="Breakfast Included"
+              sx={{
+                "& .MuiSvgIcon-root": { fontSize: 28 },
+                backgroundColor: "white",
+                color: "black",
+                borderRadius: "5px",
+                margin: 0,
+              }}
+              checked={editBreakfast}
+              onChange={(e) => setEditBreakfast(e.target.checked)}
+            />
+            <StyledTextField
+              id="outlined-number"
+              placeholder="Rating"
+              label="Rating"
+              value={editRating}
+              onChange={(e) => setEditRating(e.target.value)}
+            />
+            <StyledTextField
+              id="outlined-required"
+              placeholder="Address"
+              label="Address"
+              value={editAddress}
+              onChange={(e) => setEditAddress(e.target.value)}
+            />
+
+            <StyledTextField
+              id="outlined-required"
+              placeholder="City"
+              label="City"
+              value={editCity}
+              onChange={(e) => setEditCity(e.target.value)}
+            />
+            <StyledTextField
+              id="outlined-required"
+              placeholder="Zip-code"
+              label="Zip-code"
+              value={editZip}
+              onChange={(e) => setEditZip(e.target.value)}
+            />
+            <StyledTextField
+              id="outlined-required"
+              placeholder="Country"
+              label="Country"
+              value={editCountry}
+              onChange={(e) => setEditCountry(e.target.value)}
+            />
+            <StyledTextField
+              id="outlined-required"
+              placeholder="Continent"
+              label="Continent"
+              value={editContinent}
+              onChange={(e) => setEditContinent(e.target.value)}
+            />
+
+            <StyledTextField
+              id="outlined-number"
+              placeholder="Latitude"
+              label="Latitude"
+              value={editLatitude}
+              onChange={(e) => setEditLatitude(e.target.value)}
+            />
+            <StyledTextField
+              id="outlined-number"
+              placeholder="Longitude"
+              label="Longitude"
+              value={editLongitude}
+              onChange={(e) => setEditLongitude(e.target.value)}
+            />
+
+            <Button
+              variant="contained"
+              sx={{ padding: ".5rem 4rem", margin: ".5rem 0 0" }}
+              onClick={handleEditVenue}
+            >
+              Edit Venue
+            </Button>
+          </StyledBookings>
+        </StyledModal>
+      </Modal>
+
+      <Modal
+        style={{ overflow: "scroll" }}
+        open={openTwo}
+        onClose={handleCloseTwo}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <StyledModal>
+          <StyledBookings style={{ marginBottom: "2rem" }}>
+            {myVenues.map((booking) => (
+              <StyledVenueBooking key={booking.id}>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "1rem",
+                    alignItems: "center",
+                  }}
+                >
+                  {" "}
+                  <StyledBookingImg src={booking.customer.avatar.url} />
+                  <StyledH3>
+                    {capitalizeFirstLetter(booking.customer.name)}
+                  </StyledH3>
+                </div>
+                {formatDate(booking.dateFrom)} <br />
+                {formatDate(booking.dateTo)}
+              </StyledVenueBooking>
+            ))}
+          </StyledBookings>
+        </StyledModal>
+      </Modal>
     </>
   );
 }

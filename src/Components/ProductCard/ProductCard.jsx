@@ -94,7 +94,14 @@ function ProductCard({ product }) {
   const isParking = product.meta.parking === true;
   const isPets = product.meta.pets === true;
   const isBreakfast = product.meta.breakfast === true;
-  const isImage = product.media[0].url !== null || product.media[0].url !== "";
+  const isImage =
+    product.media &&
+    product.media.length > 0 &&
+    product.media[0].url &&
+    (product.media[0].url !== null ||
+      product.media[0].url !== "" ||
+      product.media[0].url !== "null" ||
+      product.media[0].url !== "undefined");
   const isStarRating = product.rating > 0;
   const [imageLoaded, setImageLoaded] = useState(false);
 

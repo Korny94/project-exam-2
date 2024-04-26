@@ -46,6 +46,9 @@ function Search() {
       .then((data) => {
         setProducts(data.data);
         setFilteredSuggestions(data.data); // Initialize filteredSuggestions with all products
+        for (let i = 0; i < data.data.length; i++) {
+          console.log(data.data[i].media[0]);
+        }
         console.log(data.data);
       })
       .catch((error) => {
@@ -89,9 +92,7 @@ function Search() {
 
   return (
     <>
-      {fetchError && (
-        <StyledP>Something went wrong.. Please try again.</StyledP>
-      )}
+      {fetchError && alert("Error fetching products. Please try again.")}
       {products.length === 0 && !fetchError && <Loader />}
 
       <StyledDiv onBlur={handleBlur}>

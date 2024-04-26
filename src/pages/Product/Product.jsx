@@ -336,6 +336,21 @@ function Product() {
                     productInfo.location.country.toLowerCase()
                   )}
               </p>
+              <p>
+                <strong>Continent: </strong>
+                {checkNullOrEmpty(productInfo.location.country) &&
+                  capitalizeFirstLetter(
+                    productInfo.location.continent.toLowerCase()
+                  )}
+              </p>
+              <p>
+                <strong>Latitude: </strong>
+                {productInfo.location.lat}
+              </p>
+              <p>
+                <strong>Longitude: </strong>
+                {productInfo.location.lng}
+              </p>
             </StyledModal>
           </Modal>
         </>
