@@ -74,7 +74,12 @@ function AddToCart({ product }) {
   const user = JSON.parse(localStorage.getItem("user"));
 
   const handleBooking = () => {
-    if (localStorage.getItem("user") === null) {
+    if (
+      localStorage.getItem("user") === null ||
+      user.accessToken === null ||
+      user.accessToken === ""
+    ) {
+      alert("Please log in to book a venue.");
       navigate("/login");
     } else if (fromValue === null) {
       alert("Please select a 'from' date.");

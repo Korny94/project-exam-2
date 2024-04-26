@@ -41,7 +41,7 @@ function Search() {
 
   useEffect(() => {
     // Fetch products from the API
-    fetch(API_ALL_VENUES)
+    fetch(`${API_ALL_VENUES}?_bookings=true`)
       .then((response) => response.json())
       .then((data) => {
         setProducts(data.data);

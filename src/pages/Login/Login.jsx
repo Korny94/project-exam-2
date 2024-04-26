@@ -8,6 +8,13 @@ import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import Popover from "@mui/material/Popover";
 import Typography from "@mui/material/Typography";
 import { useNavigate } from "react-router-dom";
+import InputAdornment from "@mui/material/InputAdornment";
+import IconButton from "@mui/material/IconButton";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import OutlinedInput from "@mui/material/OutlinedInput";
 
 const API_REGISTER = process.env.REACT_APP_API_REGISTER;
 const API_LOGIN = process.env.REACT_APP_API_LOGIN;
@@ -39,6 +46,11 @@ const StyledTextField = styled(TextField)`
   border-radius: 5px;
 `;
 
+const StyledOutlinedInput = styled(OutlinedInput)`
+  background-color: white;
+  border-radius: 5px;
+`;
+
 const StyledDiv2 = styled.div`
   display: flex;
   flex-direction: column;
@@ -64,7 +76,14 @@ function Login() {
   const [regConfirmPassword, setRegConfirmPassword] = useState("");
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [venueManager, setVenueManager] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
 
   const handlePopoverOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -264,17 +283,35 @@ function Login() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-          <StyledTextField
-            required
-            id="outlined-password-input"
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+
+          <FormControl sx={{ m: 1, width: "25ch" }} variant="outlined">
+            <InputLabel htmlFor="outlined-adornment-password" required>
+              Password
+            </InputLabel>
+            <StyledOutlinedInput
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+              id="outlined-adornment-password"
+              type={showPassword ? "text" : "password"}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              }
+            />
+          </FormControl>
+
           <Button
             variant="contained"
-            sx={{ padding: ".5rem 4rem", margin: ".5rem 0 0" }}
+            sx={{ padding: ".5rem 4rem", margin: ".5rem 0 0", width: "220px" }}
             onClick={handleLogin}
           >
             Log in
@@ -295,6 +332,7 @@ function Login() {
             required
             id="outlined-required"
             placeholder="Name"
+            label="Name"
             value={regName}
             onChange={(e) => setRegName(e.target.value)}
           />
@@ -302,25 +340,61 @@ function Login() {
             required
             id="outlined-required"
             placeholder="Email@stud.noroff.no"
+            label="Email"
             value={regEmail}
             onChange={(e) => setRegEmail(e.target.value)}
           />
-          <StyledTextField
-            required
-            id="outlined-password-input"
-            type="password"
-            placeholder="Password"
-            value={regPassword}
-            onChange={(e) => setRegPassword(e.target.value)}
-          />
-          <StyledTextField
-            required
-            id="outlined-password-input"
-            type="password"
-            placeholder="Confirm Password"
-            value={regConfirmPassword}
-            onChange={(e) => setRegConfirmPassword(e.target.value)}
-          />
+
+          <FormControl sx={{ m: 1, width: "25ch" }} variant="outlined">
+            <InputLabel htmlFor="outlined-adornment-password" required>
+              Password
+            </InputLabel>
+            <StyledOutlinedInput
+              value={regPassword}
+              onChange={(e) => setRegPassword(e.target.value)}
+              placeholder="Password"
+              id="outlined-adornment-password"
+              type={showPassword ? "text" : "password"}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              }
+            />
+          </FormControl>
+
+          <FormControl sx={{ m: 1, width: "25ch" }} variant="outlined">
+            <InputLabel htmlFor="outlined-adornment-password" required>
+              Password
+            </InputLabel>
+            <StyledOutlinedInput
+              value={regConfirmPassword}
+              onChange={(e) => setRegConfirmPassword(e.target.value)}
+              placeholder="Password"
+              id="outlined-adornment-password"
+              type={showPassword ? "text" : "password"}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              }
+            />
+          </FormControl>
+
           <StyledDiv3>
             <Checkbox
               color="primary"
@@ -364,7 +438,7 @@ function Login() {
           </StyledDiv3>
           <Button
             variant="contained"
-            sx={{ padding: ".5rem 4rem", margin: ".5rem 0 0" }}
+            sx={{ padding: ".5rem 4rem", margin: ".5rem 0 0", width: "220px" }}
             onClick={handleRegister}
           >
             Register

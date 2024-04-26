@@ -23,7 +23,7 @@ const StyledNavItems = styled.div`
     linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2));
 
   &:active {
-    scale: 1.5;
+    scale: 1.2;
   }
 
   &:hover {

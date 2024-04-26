@@ -95,8 +95,8 @@ const StyledParagraph = styled.p`
 
 const StyledDiscount = styled.div`
   display: flex;
-  gap: 2rem;
-  margin: -1rem 2rem 2rem 2rem;
+  gap: 5rem;
+  margin: 0.5rem 2rem 3rem 2rem;
   align-items: center;
 `;
 
