@@ -111,7 +111,7 @@ function Login() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     // Check if the email matches the allowed pattern
-    if (!emailRegex.test(email)) {
+    if (!emailRegex.test(email.trim())) {
       // Email is invalid, show an error message or handle it accordingly
       alert("Invalid email address");
       return; // Exit early if the email is invalid
@@ -128,7 +128,7 @@ function Login() {
 
     // Create a new user object
     const user = {
-      email: email.toLowerCase(),
+      email: email.toLowerCase().trim(),
       password: password,
     };
 
@@ -254,8 +254,8 @@ function Login() {
 
     // Create a new user object
     const newUser = {
-      name: regName.toLowerCase(),
-      email: regEmail.toLowerCase(),
+      name: regName.toLowerCase().trim(),
+      email: regEmail.toLowerCase().trim(),
       password: regPassword,
       venueManager: venueManager,
     };
