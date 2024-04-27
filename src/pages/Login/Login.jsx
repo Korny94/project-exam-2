@@ -128,7 +128,7 @@ function Login() {
 
     // Create a new user object
     const user = {
-      email: email,
+      email: email.toLowerCase(),
       password: password,
     };
 
@@ -254,8 +254,8 @@ function Login() {
 
     // Create a new user object
     const newUser = {
-      name: regName,
-      email: regEmail,
+      name: regName.toLowerCase(),
+      email: regEmail.toLowerCase(),
       password: regPassword,
       venueManager: venueManager,
     };
