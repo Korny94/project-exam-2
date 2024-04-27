@@ -19,6 +19,7 @@ import OutlinedInput from "@mui/material/OutlinedInput";
 const API_REGISTER = process.env.REACT_APP_API_REGISTER;
 const API_LOGIN = process.env.REACT_APP_API_LOGIN;
 const CREATE_KEY = process.env.REACT_APP_API_CREATE_KEY;
+const ALL_PROFILES = process.env.REACT_APP_API_ALL_PROFILES;
 console.log(API_REGISTER, API_LOGIN, CREATE_KEY);
 
 const StyledDiv = styled.div`
@@ -165,10 +166,42 @@ function Login() {
             body: JSON.stringify(key),
           })
             .then((response) => response.json())
-            .then((data) => {
-              console.log(data);
-              localStorage.setItem("key", JSON.stringify(data.data));
-              navigate("/profile");
+            .then((dataKey) => {
+              console.log(dataKey);
+              localStorage.setItem("key", JSON.stringify(dataKey.data));
+
+              fetch(`${ALL_PROFILES}${data.data.name}`, {
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${data.data.accessToken}`,
+                  "X-Noroff-API-Key": `${dataKey.data.key}`,
+                },
+              })
+                .then((response) => response.json())
+                .then((dataProfile) => {
+                  console.log(dataProfile);
+                  console.log(
+                    ALL_PROFILES,
+                    data.data.accessToken,
+                    dataKey.data.key
+                  );
+                  if (dataProfile.errors) {
+                    // Handle the error response here
+                    alert(dataProfile.errors[0].message);
+                    return; // Exit early if there's an error
+                  } else {
+                    // Handle the API response here
+                    localStorage.setItem(
+                      "profile",
+                      JSON.stringify(dataProfile.data)
+                    );
+                    navigate("/profile");
+                  }
+                })
+                .catch((error) => {
+                  console.error("Error getting profile:", error);
+                });
             })
             .catch((error) => {
               console.error("Error creating key:", error);
@@ -188,7 +221,7 @@ function Login() {
     // Check if the name matches the allowed pattern
     if (!nameRegex.test(regName)) {
       // name contains invalid characters, show an error message or handle it accordingly
-      alert("name must not contain symbols apart from underscore (_)");
+      alert("Name must not contain symbols apart from underscore (_)");
       return; // Exit early if the name is invalid
     }
 
@@ -224,7 +257,7 @@ function Login() {
       name: regName,
       email: regEmail,
       password: regPassword,
-      venueManager: venueManager, // Set to true if the user wants to be a venue manager
+      venueManager: venueManager,
     };
 
     // Send the new user object to the API
@@ -247,7 +280,6 @@ function Login() {
           setShowRegister(false); // Ensure only the clicked one is active
           alert("User registered successfully, please log in");
         }
-        // Handle the API response here
       })
       .catch((error) => {
         console.error("Error registering user:", error);

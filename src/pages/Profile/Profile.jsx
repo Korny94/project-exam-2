@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import noProfileImg from "../../assets/noProfileImg.png";
 import editBtn from "../../assets/editBtn.png";
@@ -11,13 +11,23 @@ import trash from "../../assets/trash.png";
 import Modal from "@mui/material/Modal";
 import bookingsIcon from "../../assets/ticket.png";
 
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import Popover from "@mui/material/Popover";
+import Typography from "@mui/material/Typography";
+
 import logOut from "../../assets/logOut.png";
 import { useNavigate } from "react-router-dom";
 import Loader from "../../Components/Loader/Loader";
 
 const ALL_PROFILES = process.env.REACT_APP_API_ALL_PROFILES;
-const ALL_BOOKINGS = process.env.REACT_APP_API_ALL_BOOKINGS;
 const ALL_VENUES = process.env.REACT_APP_API_ALL_VENUES;
+
+const StyledDiv = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 1rem auto;
+`;
 
 const StyledModal = styled.div`
   width: 80vw;
@@ -171,6 +181,8 @@ function Login() {
   const [showMyBookings, setShowMyBookings] = useState(false);
   const [showMyVenues, setShowMyVenues] = useState(false);
   const [showNewVenue, setShowNewVenue] = useState(false);
+  const [venueManager, setVenueManager] = useState(false);
+  const [anchorEl, setAnchorEl] = React.useState(null);
   const Navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const user = JSON.parse(localStorage.getItem("user"));
@@ -196,9 +208,10 @@ function Login() {
   const [breakfast, setBreakfast] = useState(false);
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const open = Boolean(anchorEl);
+  const [openOne, setOpenOne] = React.useState(false);
+  const handleOpen = () => setOpenOne(true);
+  const handleClose = () => setOpenOne(false);
   const [openTwo, setOpenTwo] = React.useState(false);
   const handleOpenTwo = () => setOpenTwo(true);
   const handleCloseTwo = () => setOpenTwo(false);
@@ -221,6 +234,59 @@ function Login() {
   const [editVenueName, setEditVenueName] = useState("");
   const [venueId, setVenueId] = useState("");
   const [myVenues, setMyVenues] = useState([]);
+
+  useEffect(() => {
+    const profile = JSON.parse(localStorage.getItem("profile"));
+    // Check if profile exists and if venueManager is "true" in the profile
+    if (profile && profile.venueManager === true) {
+      setVenueManager(true);
+    } else {
+      setVenueManager(false);
+    }
+  }, []);
+
+  const handleVenueManagerChange = (event) => {
+    const newValue = event.target.checked;
+    setVenueManager(newValue);
+    handleVenueManager(newValue); // Call the function to update the profile
+  };
+
+  const handleVenueManager = (newValue) => {
+    fetch(`${ALL_PROFILES}${user.name}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${user.accessToken}`,
+        "X-Noroff-API-Key": key.key,
+      },
+      body: JSON.stringify({
+        venueManager: newValue,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.errors) {
+          alert(data.errors[0].message);
+        } else {
+          localStorage.setItem("profile", JSON.stringify(data.data));
+
+          alert("Venue Manager status updated successfully!");
+          if (data.data.venueManager === false) {
+            setShowMyVenues(false);
+            setShowMyBookings(false);
+            setShowNewVenue(false);
+          }
+        }
+      });
+  };
+
+  const handlePopoverOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
 
   const handleCreateVenue = () => {
     console.log(
@@ -337,7 +403,11 @@ function Login() {
           if (data.errors) {
             alert(data.errors[0].message);
           } else {
-            localStorage.setItem("user", JSON.stringify(data.data));
+            // Update the avatar URL property with userInput
+            user.avatar.url = userInput;
+
+            // Store the updated user object back in local storage
+            localStorage.setItem("user", JSON.stringify(user));
             window.location.reload();
           }
         });
@@ -353,6 +423,7 @@ function Login() {
     setTimeout(() => {
       localStorage.removeItem("user");
       localStorage.removeItem("key");
+      localStorage.removeItem("profile");
       Navigate("/");
     }, 500);
   };
@@ -382,31 +453,44 @@ function Login() {
   };
 
   const handleMyVenues = () => {
-    setShowMyBookings(false);
-    setShowMyVenues(true);
-    setShowNewVenue(false);
-
-    fetch(`${ALL_PROFILES}${user.name}/venues?_bookings=true`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${user.accessToken}`,
-        "X-Noroff-API-Key": key.key,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.errors) {
-          alert(data.errors[0].message);
-        } else {
-          setVenues(data.data);
-        }
-      });
+    if (venueManager) {
+      setShowMyBookings(false);
+      setShowMyVenues(true);
+      setShowNewVenue(false);
+      fetch(`${ALL_PROFILES}${user.name}/venues?_bookings=true`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${user.accessToken}`,
+          "X-Noroff-API-Key": key.key,
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.errors) {
+            alert(data.errors[0].message);
+          } else {
+            setVenues(data.data);
+          }
+        });
+    } else {
+      setShowMyBookings(false);
+      setShowMyVenues(false);
+      setShowNewVenue(false);
+      alert("Please enable Venue Manager status to view your venues.");
+    }
   };
 
   const handleNewVenue = () => {
-    setShowMyBookings(false);
-    setShowMyVenues(false);
-    setShowNewVenue(true);
+    if (venueManager) {
+      setShowMyBookings(false);
+      setShowMyVenues(false);
+      setShowNewVenue(true);
+    } else {
+      setShowMyBookings(false);
+      setShowMyVenues(false);
+      setShowNewVenue(false);
+      alert("Please enable Venue Manager status to create a new venue.");
+    }
   };
 
   const fetchVenue = (bookingId) => {
@@ -491,7 +575,7 @@ function Login() {
   };
 
   const handleEditClick = (venue) => {
-    setOpen(true);
+    setOpenOne(true);
     setVenueId(venue.id);
     setEditVenueName(venue.name);
     setEditDescription(venue.description);
@@ -598,7 +682,7 @@ function Login() {
           setLatitude("");
           setLongitude("");
           setVenueName("");
-          setOpen(false);
+          setOpenOne(false);
           window.location.reload();
         }
       });
@@ -631,6 +715,48 @@ function Login() {
         <StyledEditBtn src={editBtn} alt="Edit" />
       </StyledImgDiv>
       <StyledH2>{capitalizeFirstLetter(user.name)}</StyledH2>
+      <StyledDiv>
+        <Checkbox
+          color="primary"
+          inputProps={{ "aria-label": "primary checkbox" }}
+          sx={{ color: "white" }}
+          checked={venueManager}
+          onChange={handleVenueManagerChange} // Pass the event handler to onChange
+        />
+        <p style={{ color: "white" }}>Be a Venue Manager</p>
+        <HelpOutlineIcon
+          title="Hi"
+          sx={{ color: "white", marginLeft: ".5rem" }}
+          aria-owns={open ? "mouse-over-popover" : undefined}
+          aria-haspopup="true"
+          onMouseEnter={handlePopoverOpen}
+          onMouseLeave={handlePopoverClose}
+        />
+        <div>
+          <Popover
+            id="mouse-over-popover"
+            sx={{
+              pointerEvents: "none",
+            }}
+            open={open}
+            anchorEl={anchorEl}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "left",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "left",
+            }}
+            onClose={handlePopoverClose}
+            disableRestoreFocus
+          >
+            <Typography sx={{ p: 1 }}>
+              Become a venue manager and create own venues and more!
+            </Typography>
+          </Popover>
+        </div>
+      </StyledDiv>
       <StyledBtnsDiv>
         <Fab
           variant="extended"
@@ -668,9 +794,14 @@ function Login() {
                 title="YYYY-MM-DD"
                 onClick={() => fetchVenue(booking.venue.id)}
                 key={booking.id}
+                style={{ cursor: "pointer" }}
               >
                 <div
-                  style={{ display: "flex", gap: "1rem", alignItems: "center" }}
+                  style={{
+                    display: "flex",
+                    gap: "1rem",
+                    alignItems: "center",
+                  }}
                 >
                   {" "}
                   <StyledBookingImg src={booking.venue.media[0].url} />
@@ -690,7 +821,11 @@ function Login() {
               <StyledBooking>
                 <div
                   onClick={() => fetchVenue(venue.id)}
-                  style={{ display: "flex", gap: "1rem", alignItems: "center" }}
+                  style={{
+                    display: "flex",
+                    gap: "1rem",
+                    alignItems: "center",
+                  }}
                 >
                   {" "}
                   <StyledBookingImg src={venue.media[0].url} />
@@ -892,10 +1027,9 @@ function Login() {
         alt="Log Out"
         title="Log out"
       />
-
       <Modal
         style={{ overflow: "scroll" }}
-        open={open}
+        open={openOne}
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
@@ -1061,7 +1195,6 @@ function Login() {
           </StyledBookings>
         </StyledModal>
       </Modal>
-
       <Modal
         style={{ overflow: "scroll" }}
         open={openTwo}
@@ -1069,7 +1202,7 @@ function Login() {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <StyledModal>
+        <StyledModal style={{ backgroundColor: "#B2B2B2" }}>
           <StyledBookings style={{ marginBottom: "2rem" }}>
             {myVenues.map((booking) => (
               <StyledVenueBooking key={booking.id}>
