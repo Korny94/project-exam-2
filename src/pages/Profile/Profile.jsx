@@ -98,11 +98,14 @@ const StyledBtnsDiv = styled.div`
 `;
 
 const StyledBookingsDiv = styled.div`
-  width: 330px;
-  margin: 0 auto;
   display: flex;
-  justify-content: center;
   flex-direction: column;
+  height: 50vh;
+  width: 90vw;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 1rem;
+  align-items: center;
 `;
 
 const StyledBookings = styled.div`
@@ -110,17 +113,24 @@ const StyledBookings = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  margin-top: 2rem;
+  width: 100vw;
+  align-items: center;
+  padding: 1rem 0;
 `;
 
 const StyledBooking = styled.div`
   box-shadow: 0px 0px 10px 2px #1f4c65;
+  width: 75vw;
   border-radius: 30px;
   padding: 1rem 1.5rem;
   display: flex;
   align-items: center;
-  gap: 1rem;
   justify-content: space-between;
+`;
+
+const StyledBookingIconsDiv = styled.div`
+  display: flex;
+  gap: 1rem;
 `;
 
 const StyledBookingImg = styled.img`
@@ -139,30 +149,22 @@ const StyledH3 = styled.h3`
 const StyledTextField = styled(TextField)`
   background-color: white;
   border-radius: 5px;
+  width: 100%;
 `;
 
 const StyledBookingsIcon = styled.img`
   width: 22.5px;
-  object-fit: cover;
-  position: absolute;
-  margin-left: 175px;
   cursor: pointer;
   filter: invert(1);
 `;
 
 const StyledEditIcon = styled.img`
   width: 22.5px;
-  object-fit: cover;
-  position: absolute;
-  margin-left: 215px;
   cursor: pointer;
 `;
 
 const StyledTrashIcon = styled.img`
   width: 22.5px;
-  object-fit: cover;
-  position: absolute;
-  margin-left: 255px;
   opacity: 0.6;
   cursor: pointer;
 `;
@@ -460,7 +462,12 @@ function Login() {
           handlePopupMessages(data.errors[0].message);
         } else {
           console.log(data.data.bookings);
-          setBookings(data.data.bookings);
+          const fetchedBookings = data.data.bookings.sort((a, b) => {
+            const dateA = new Date(a.dateFrom);
+            const dateB = new Date(b.dateFrom);
+            return dateA - dateB;
+          });
+          setBookings(fetchedBookings);
         }
       });
   };
@@ -711,6 +718,13 @@ function Login() {
 
   const handleBookingsIconClick = (venue) => {
     handleOpenTwo();
+
+    const fetchedBookings = venue.bookings.sort((a, b) => {
+      const dateA = new Date(a.dateFrom);
+      const dateB = new Date(b.dateFrom);
+      return dateA - dateB;
+    });
+    setMyVenues(fetchedBookings);
     console.log(myVenues);
   };
 
@@ -774,7 +788,7 @@ function Login() {
             disableScrollLock
           >
             <Typography sx={{ p: 1 }}>
-              Become a venue manager and create own venues and more!
+              Become a venue manager to create own venues and more!
             </Typography>
           </Popover>
         </div>
@@ -853,33 +867,36 @@ function Login() {
                   <StyledBookingImg src={venue.media[0].url} />
                   <StyledH3>{capitalizeFirstLetter(venue.name)}</StyledH3>
                 </div>
-                <StyledBookingsIcon
-                  onClick={() => {
-                    handleBookingsIconClick(venue);
-                    setMyVenues(venue.bookings);
-                  }}
-                  src={bookingsIcon}
-                  alt="Bookings"
-                  title="Bookings"
-                />
-                <StyledEditIcon
-                  onClick={() => {
-                    handleEditClick(venue);
-                  }}
-                  src={editBtn}
-                  alt="Edit"
-                />
-                <StyledTrashIcon
-                  src={trash}
-                  alt="Delete"
-                  onClick={() => handleDeleteVenue(venue.id)}
-                />
+                <StyledBookingIconsDiv>
+                  <StyledBookingsIcon
+                    onClick={() => {
+                      handleBookingsIconClick(venue);
+                    }}
+                    src={bookingsIcon}
+                    alt="Bookings"
+                    title="Bookings"
+                  />
+                  <StyledEditIcon
+                    onClick={() => {
+                      handleEditClick(venue);
+                    }}
+                    src={editBtn}
+                    title="Edit Venue"
+                    alt="Edit"
+                  />
+                  <StyledTrashIcon
+                    src={trash}
+                    title="Delete Venue"
+                    alt="Delete"
+                    onClick={() => handleDeleteVenue(venue.id)}
+                  />
+                </StyledBookingIconsDiv>
               </StyledBooking>
             ))}
           </StyledBookings>
         )}
         {showNewVenue && (
-          <StyledBookings>
+          <StyledBookings style={{ width: "350px" }}>
             <StyledTextField
               required
               id="outlined-required"
@@ -887,6 +904,19 @@ function Login() {
               value={venueName}
               onChange={(e) => setVenueName(e.target.value)}
               label="Name of Venue"
+              InputLabelProps={{
+                style: {
+                  color: "black",
+                  backgroundColor: "#F5F5F5",
+                  height: "fit-content",
+                  width: "fit-content",
+                  borderRadius: "5px",
+                  padding: "0.2rem .7rem",
+                  margin: "-0.2rem 0 0 -.3rem",
+                  boxShadow: "0 2.5px 5px 0 rgba(0,0,0,0.2)",
+                  opacity: ".9",
+                },
+              }}
             />
             <StyledTextField
               required
@@ -897,9 +927,22 @@ function Login() {
               label="Description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+              InputLabelProps={{
+                style: {
+                  color: "black",
+                  backgroundColor: "#F5F5F5",
+                  height: "fit-content",
+                  width: "fit-content",
+                  borderRadius: "5px",
+                  padding: "0.2rem .7rem",
+                  margin: "-0.2rem 0 0 -.3rem",
+                  boxShadow: "0 2.5px 5px 0 rgba(0,0,0,0.2)",
+                  opacity: ".9",
+                },
+              }}
             />
 
-            <StyledDiv style={{ gap: "1rem" }}>
+            <StyledDiv style={{ gap: ".5rem" }}>
               <StyledTextField
                 required
                 id="outlined-number"
@@ -907,6 +950,41 @@ function Login() {
                 label="Price"
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
+                style={{ width: "60%" }}
+                InputLabelProps={{
+                  style: {
+                    color: "black",
+                    backgroundColor: "#F5F5F5",
+                    height: "fit-content",
+                    width: "fit-content",
+                    borderRadius: "5px",
+                    padding: "0.2rem .7rem",
+                    margin: "-0.2rem 0 0 -.3rem",
+                    boxShadow: "0 2.5px 5px 0 rgba(0,0,0,0.2)",
+                    opacity: ".9",
+                  },
+                }}
+              />
+              <StyledTextField
+                id="outlined-number"
+                placeholder="Rating"
+                label="Rating"
+                value={rating}
+                onChange={(e) => setRating(e.target.value)}
+                style={{ width: "60%" }}
+                InputLabelProps={{
+                  style: {
+                    color: "black",
+                    backgroundColor: "#F5F5F5",
+                    height: "fit-content",
+                    width: "fit-content",
+                    borderRadius: "5px",
+                    padding: "0.2rem .7rem",
+                    margin: "-0.2rem 0 0 -.3rem",
+                    boxShadow: "0 2.5px 5px 0 rgba(0,0,0,0.2)",
+                    opacity: ".9",
+                  },
+                }}
               />
               <StyledTextField
                 required
@@ -915,6 +993,19 @@ function Login() {
                 label="Max. Guests"
                 value={maxGuests}
                 onChange={(e) => setMaxGuests(e.target.value)}
+                InputLabelProps={{
+                  style: {
+                    color: "black",
+                    backgroundColor: "#F5F5F5",
+                    height: "fit-content",
+                    width: "fit-content",
+                    borderRadius: "5px",
+                    padding: "0.2rem .7rem",
+                    margin: "-0.2rem 0 0 -.3rem",
+                    boxShadow: "0 2.5px 5px 0 rgba(0,0,0,0.2)",
+                    opacity: ".9",
+                  },
+                }}
               />
             </StyledDiv>
             <StyledTextField
@@ -923,8 +1014,21 @@ function Login() {
               label="Image URL"
               value={imgUrl}
               onChange={(e) => setImgUrl(e.target.value)}
+              InputLabelProps={{
+                style: {
+                  color: "black",
+                  backgroundColor: "#F5F5F5",
+                  height: "fit-content",
+                  width: "fit-content",
+                  borderRadius: "5px",
+                  padding: "0.2rem .7rem",
+                  margin: "-0.2rem 0 0 -.3rem",
+                  boxShadow: "0 2.5px 5px 0 rgba(0,0,0,0.2)",
+                  opacity: ".9",
+                },
+              }}
             />
-            <StyledDiv style={{ gap: "1rem" }}>
+            <StyledDiv style={{ gap: "1rem", width: "100%" }}>
               <FormControlLabel
                 control={<Checkbox />}
                 label="WiFi"
@@ -952,7 +1056,7 @@ function Login() {
                 onChange={(e) => setParking(e.target.checked)}
               />
             </StyledDiv>
-            <StyledDiv style={{ gap: "1rem" }}>
+            <StyledDiv style={{ gap: "1rem", width: "100%" }}>
               <FormControlLabel
                 control={<Checkbox />}
                 label="Pets Allowed"
@@ -980,19 +1084,26 @@ function Login() {
                 onChange={(e) => setBreakfast(e.target.checked)}
               />
             </StyledDiv>
-            <StyledTextField
-              id="outlined-number"
-              placeholder="Rating"
-              label="Rating"
-              value={rating}
-              onChange={(e) => setRating(e.target.value)}
-            />
+
             <StyledTextField
               id="outlined-required"
               placeholder="Address"
               label="Address"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
+              InputLabelProps={{
+                style: {
+                  color: "black",
+                  backgroundColor: "#F5F5F5",
+                  height: "fit-content",
+                  width: "fit-content",
+                  borderRadius: "5px",
+                  padding: "0.2rem .7rem",
+                  margin: "-0.2rem 0 0 -.3rem",
+                  boxShadow: "0 2.5px 5px 0 rgba(0,0,0,0.2)",
+                  opacity: ".9",
+                },
+              }}
             />
             <StyledDiv style={{ gap: "1rem" }}>
               <StyledTextField
@@ -1001,6 +1112,19 @@ function Login() {
                 label="City"
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
+                InputLabelProps={{
+                  style: {
+                    color: "black",
+                    backgroundColor: "#F5F5F5",
+                    height: "fit-content",
+                    width: "fit-content",
+                    borderRadius: "5px",
+                    padding: "0.2rem .7rem",
+                    margin: "-0.2rem 0 0 -.3rem",
+                    boxShadow: "0 2.5px 5px 0 rgba(0,0,0,0.2)",
+                    opacity: ".9",
+                  },
+                }}
               />
               <StyledTextField
                 id="outlined-required"
@@ -1008,6 +1132,19 @@ function Login() {
                 label="Zip-code"
                 value={zip}
                 onChange={(e) => setZip(e.target.value)}
+                InputLabelProps={{
+                  style: {
+                    color: "black",
+                    backgroundColor: "#F5F5F5",
+                    height: "fit-content",
+                    width: "fit-content",
+                    borderRadius: "5px",
+                    padding: "0.2rem .7rem",
+                    margin: "-0.2rem 0 0 -.3rem",
+                    boxShadow: "0 2.5px 5px 0 rgba(0,0,0,0.2)",
+                    opacity: ".9",
+                  },
+                }}
               />
             </StyledDiv>
             <StyledDiv style={{ gap: "1rem" }}>
@@ -1017,6 +1154,19 @@ function Login() {
                 label="Country"
                 value={country}
                 onChange={(e) => setCountry(e.target.value)}
+                InputLabelProps={{
+                  style: {
+                    color: "black",
+                    backgroundColor: "#F5F5F5",
+                    height: "fit-content",
+                    width: "fit-content",
+                    borderRadius: "5px",
+                    padding: "0.2rem .7rem",
+                    margin: "-0.2rem 0 0 -.3rem",
+                    boxShadow: "0 2.5px 5px 0 rgba(0,0,0,0.2)",
+                    opacity: ".9",
+                  },
+                }}
               />
               <StyledTextField
                 id="outlined-required"
@@ -1024,6 +1174,19 @@ function Login() {
                 label="Continent"
                 value={continent}
                 onChange={(e) => setContinent(e.target.value)}
+                InputLabelProps={{
+                  style: {
+                    color: "black",
+                    backgroundColor: "#F5F5F5",
+                    height: "fit-content",
+                    width: "fit-content",
+                    borderRadius: "5px",
+                    padding: "0.2rem .7rem",
+                    margin: "-0.2rem 0 0 -.3rem",
+                    boxShadow: "0 2.5px 5px 0 rgba(0,0,0,0.2)",
+                    opacity: ".9",
+                  },
+                }}
               />
             </StyledDiv>
             <StyledDiv style={{ gap: "1rem" }}>
@@ -1033,6 +1196,19 @@ function Login() {
                 label="Latitude"
                 value={latitude}
                 onChange={(e) => setLatitude(e.target.value)}
+                InputLabelProps={{
+                  style: {
+                    color: "black",
+                    backgroundColor: "#F5F5F5",
+                    height: "fit-content",
+                    width: "fit-content",
+                    borderRadius: "5px",
+                    padding: "0.2rem .7rem",
+                    margin: "-0.2rem 0 0 -.3rem",
+                    boxShadow: "0 2.5px 5px 0 rgba(0,0,0,0.2)",
+                    opacity: ".9",
+                  },
+                }}
               />
               <StyledTextField
                 id="outlined-number"
@@ -1040,6 +1216,19 @@ function Login() {
                 label="Longitude"
                 value={longitude}
                 onChange={(e) => setLongitude(e.target.value)}
+                InputLabelProps={{
+                  style: {
+                    color: "black",
+                    backgroundColor: "#F5F5F5",
+                    height: "fit-content",
+                    width: "fit-content",
+                    borderRadius: "5px",
+                    padding: "0.2rem .7rem",
+                    margin: "-0.2rem 0 0 -.3rem",
+                    boxShadow: "0 2.5px 5px 0 rgba(0,0,0,0.2)",
+                    opacity: ".9",
+                  },
+                }}
               />
             </StyledDiv>
             <Button
@@ -1059,7 +1248,7 @@ function Login() {
         title="Log out"
       />
       <Modal
-        style={{ overflow: "scroll" }}
+        style={{ overflow: "scroll", margin: "5rem auto" }}
         open={openOne}
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
@@ -1247,7 +1436,7 @@ function Login() {
         </StyledModal>
       </Modal>
       <Modal
-        style={{ overflow: "scroll" }}
+        style={{ overflow: "scroll", margin: "5rem auto" }}
         open={openTwo}
         onClose={handleCloseTwo}
         aria-labelledby="modal-modal-title"
