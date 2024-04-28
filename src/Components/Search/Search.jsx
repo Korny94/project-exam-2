@@ -3,6 +3,8 @@ import "./Search.scss";
 import styled from "styled-components";
 import ProductCard from "../ProductCard/ProductCard";
 import Loader from "../Loader/Loader";
+import PopupMessage from "../PopupMessage/PopupMessage.jsx";
+
 const API_ALL_VENUES = process.env.REACT_APP_API_ALL_VENUES;
 
 const StyledP = styled.p`
@@ -92,9 +94,10 @@ function Search() {
 
   return (
     <>
-      {fetchError && alert("Error fetching products. Please try again.")}
+      {fetchError && (
+        <PopupMessage message={"Error fetching products. Please try again."} /> // Pass onClose prop to handle popup close
+      )}{" "}
       {products.length === 0 && !fetchError && <Loader />}
-
       <StyledDiv onBlur={handleBlur}>
         <form className="form">
           <label htmlFor="search">
@@ -140,7 +143,6 @@ function Search() {
           </ul>
         )}
       </StyledDiv>
-
       <StyledContainer>
         {searchInput.trim() === "" ? (
           products.map((product) => (

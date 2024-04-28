@@ -10,6 +10,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import trash from "../../assets/trash.png";
 import Modal from "@mui/material/Modal";
 import bookingsIcon from "../../assets/ticket.png";
+import PopupMessage from "../../Components/PopupMessage/PopupMessage.jsx";
 
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import Popover from "@mui/material/Popover";
@@ -26,7 +27,6 @@ const StyledDiv = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 1rem auto;
 `;
 
 const StyledModal = styled.div`
@@ -164,6 +164,7 @@ const StyledTrashIcon = styled.img`
   position: absolute;
   margin-left: 255px;
   opacity: 0.6;
+  cursor: pointer;
 `;
 
 const StyledVenueBooking = styled.div`
@@ -234,6 +235,8 @@ function Login() {
   const [editVenueName, setEditVenueName] = useState("");
   const [venueId, setVenueId] = useState("");
   const [myVenues, setMyVenues] = useState([]);
+  const [popupMessage, setPopupMessage] = useState("");
+  const [showPopupMessage, setShowPopupMessage] = useState(false);
 
   useEffect(() => {
     const profile = JSON.parse(localStorage.getItem("profile"));
@@ -251,6 +254,14 @@ function Login() {
     handleVenueManager(newValue); // Call the function to update the profile
   };
 
+  const handlePopupMessages = (message) => {
+    setPopupMessage(message);
+    setShowPopupMessage(true);
+    setTimeout(() => {
+      setShowPopupMessage(false);
+    }, 3000);
+  };
+
   const handleVenueManager = (newValue) => {
     fetch(`${ALL_PROFILES}${user.name}`, {
       method: "PUT",
@@ -266,11 +277,11 @@ function Login() {
       .then((res) => res.json())
       .then((data) => {
         if (data.errors) {
-          alert(data.errors[0].message);
+          handlePopupMessages(data.errors[0].message);
         } else {
           localStorage.setItem("profile", JSON.stringify(data.data));
 
-          alert("Venue Manager status updated successfully!");
+          handlePopupMessages("Venue Manager status updated successfully!");
           if (data.data.venueManager === false) {
             setShowMyVenues(false);
             setShowMyBookings(false);
@@ -310,7 +321,7 @@ function Login() {
     );
 
     if (!venueName || !description || !price || !maxGuests) {
-      alert("Please fill in all required fields.");
+      handlePopupMessages("Please fill in all required fields.");
       return;
     }
 
@@ -356,9 +367,11 @@ function Login() {
       .then((data) => {
         if (data.errors) {
           console.log(data.errors);
-          alert(data.errors[0].message);
+          handlePopupMessages(data.errors[0].message);
         } else {
-          alert("Venue created successfully!");
+          handlePopupMessages("Venue created successfully!");
+          setShowNewVenue(false);
+
           console.log(data.data);
           setAddress("");
           setCity("");
@@ -401,7 +414,7 @@ function Login() {
         .then((res) => res.json())
         .then((data) => {
           if (data.errors) {
-            alert(data.errors[0].message);
+            handlePopupMessages(data.errors[0].message);
           } else {
             // Update the avatar URL property with userInput
             user.avatar.url = userInput;
@@ -444,7 +457,7 @@ function Login() {
       .then((data) => {
         if (data.errors) {
           console.log(data.errors);
-          alert(data.errors[0].message);
+          handlePopupMessages(data.errors[0].message);
         } else {
           console.log(data.data.bookings);
           setBookings(data.data.bookings);
@@ -467,7 +480,7 @@ function Login() {
         .then((res) => res.json())
         .then((data) => {
           if (data.errors) {
-            alert(data.errors[0].message);
+            handlePopupMessages(data.errors[0].message);
           } else {
             setVenues(data.data);
           }
@@ -476,7 +489,9 @@ function Login() {
       setShowMyBookings(false);
       setShowMyVenues(false);
       setShowNewVenue(false);
-      alert("Please enable Venue Manager status to view your venues.");
+      handlePopupMessages(
+        "Please enable Venue Manager status to view your venues."
+      );
     }
   };
 
@@ -489,7 +504,9 @@ function Login() {
       setShowMyBookings(false);
       setShowMyVenues(false);
       setShowNewVenue(false);
-      alert("Please enable Venue Manager status to create a new venue.");
+      handlePopupMessages(
+        "Please enable Venue Manager status to create a new venue."
+      );
     }
   };
 
@@ -505,7 +522,7 @@ function Login() {
       .then((res) => res.json())
       .then((data) => {
         if (data.errors) {
-          alert(data.errors[0].message);
+          handlePopupMessages(data.errors[0].message);
         } else {
           console.log(data.data);
           localStorage.setItem("productInfo", JSON.stringify(data.data));
@@ -554,8 +571,10 @@ function Login() {
       })
       .then((data) => {
         // If you reach this point, the deletion was successful
-        alert("Venue deleted successfully!");
-        window.location.reload();
+        handlePopupMessages("Venue deleted successfully!");
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       })
       .catch((error) => {
         // Check if the error is due to network issues or server errors
@@ -564,7 +583,7 @@ function Login() {
           error.message === "Network response was not ok"
         ) {
           console.error("Error deleting venue:", error);
-          alert(
+          handlePopupMessages(
             "An error occurred while deleting the venue. Please try again later."
           );
         } else {
@@ -661,9 +680,9 @@ function Login() {
       .then((data) => {
         if (data.errors) {
           console.log(data.errors);
-          alert(data.errors[0].message);
+          handlePopupMessages(data.errors[0].message);
         } else {
-          alert("Venue edited successfully!");
+          handlePopupMessages("Venue edited successfully!");
           console.log(data.data);
           setAddress("");
           setCity("");
@@ -683,7 +702,9 @@ function Login() {
           setLongitude("");
           setVenueName("");
           setOpenOne(false);
-          window.location.reload();
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
         }
       });
   };
@@ -695,6 +716,7 @@ function Login() {
 
   return (
     <>
+      {showPopupMessage && <PopupMessage message={popupMessage} />}
       <StyledImgDiv onClick={handleProfileImgClick}>
         {isImage && (
           <StyledImg
@@ -725,7 +747,6 @@ function Login() {
         />
         <p style={{ color: "white" }}>Be a Venue Manager</p>
         <HelpOutlineIcon
-          title="Hi"
           sx={{ color: "white", marginLeft: ".5rem" }}
           aria-owns={open ? "mouse-over-popover" : undefined}
           aria-haspopup="true"
@@ -742,14 +763,15 @@ function Login() {
             anchorEl={anchorEl}
             anchorOrigin={{
               vertical: "bottom",
-              horizontal: "left",
+              horizontal: "right",
             }}
             transformOrigin={{
               vertical: "top",
-              horizontal: "left",
+              horizontal: "right",
             }}
             onClose={handlePopoverClose}
             disableRestoreFocus
+            disableScrollLock
           >
             <Typography sx={{ p: 1 }}>
               Become a venue manager and create own venues and more!
@@ -877,22 +899,24 @@ function Login() {
               onChange={(e) => setDescription(e.target.value)}
             />
 
-            <StyledTextField
-              required
-              id="outlined-number"
-              placeholder="Price"
-              label="Price"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-            />
-            <StyledTextField
-              required
-              id="outlined-number"
-              placeholder="Max. Guests"
-              label="Max. Guests"
-              value={maxGuests}
-              onChange={(e) => setMaxGuests(e.target.value)}
-            />
+            <StyledDiv style={{ gap: "1rem" }}>
+              <StyledTextField
+                required
+                id="outlined-number"
+                placeholder="Price"
+                label="Price"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+              />
+              <StyledTextField
+                required
+                id="outlined-number"
+                placeholder="Max. Guests"
+                label="Max. Guests"
+                value={maxGuests}
+                onChange={(e) => setMaxGuests(e.target.value)}
+              />
+            </StyledDiv>
             <StyledTextField
               id="outlined-required"
               placeholder="Image URL"
@@ -900,58 +924,62 @@ function Login() {
               value={imgUrl}
               onChange={(e) => setImgUrl(e.target.value)}
             />
-            <FormControlLabel
-              control={<Checkbox />}
-              label="WiFi Included"
-              sx={{
-                "& .MuiSvgIcon-root": { fontSize: 28 },
-                backgroundColor: "white",
-                color: "black",
-                borderRadius: "5px",
-                margin: 0,
-              }}
-              checked={wifi} // Use checked instead of value
-              onChange={(e) => setWifi(e.target.checked)}
-            />
-            <FormControlLabel
-              control={<Checkbox />}
-              label="Parking Included"
-              sx={{
-                "& .MuiSvgIcon-root": { fontSize: 28 },
-                backgroundColor: "white",
-                color: "black",
-                borderRadius: "5px",
-                margin: 0,
-              }}
-              checked={parking}
-              onChange={(e) => setParking(e.target.checked)}
-            />
-            <FormControlLabel
-              control={<Checkbox />}
-              label="Pets Allowed"
-              sx={{
-                "& .MuiSvgIcon-root": { fontSize: 28 },
-                backgroundColor: "white",
-                color: "black",
-                borderRadius: "5px",
-                margin: 0,
-              }}
-              checked={pets}
-              onChange={(e) => setPets(e.target.checked)}
-            />
-            <FormControlLabel
-              control={<Checkbox />}
-              label="Breakfast Included"
-              sx={{
-                "& .MuiSvgIcon-root": { fontSize: 28 },
-                backgroundColor: "white",
-                color: "black",
-                borderRadius: "5px",
-                margin: 0,
-              }}
-              checked={breakfast}
-              onChange={(e) => setBreakfast(e.target.checked)}
-            />
+            <StyledDiv style={{ gap: "1rem" }}>
+              <FormControlLabel
+                control={<Checkbox />}
+                label="WiFi"
+                sx={{
+                  "& .MuiSvgIcon-root": { fontSize: 28 },
+                  backgroundColor: "white",
+                  color: "black",
+                  borderRadius: "5px",
+                  margin: 0,
+                }}
+                checked={wifi} // Use checked instead of value
+                onChange={(e) => setWifi(e.target.checked)}
+              />
+              <FormControlLabel
+                control={<Checkbox />}
+                label="Parking "
+                sx={{
+                  "& .MuiSvgIcon-root": { fontSize: 28 },
+                  backgroundColor: "white",
+                  color: "black",
+                  borderRadius: "5px",
+                  margin: 0,
+                }}
+                checked={parking}
+                onChange={(e) => setParking(e.target.checked)}
+              />
+            </StyledDiv>
+            <StyledDiv style={{ gap: "1rem" }}>
+              <FormControlLabel
+                control={<Checkbox />}
+                label="Pets Allowed"
+                sx={{
+                  "& .MuiSvgIcon-root": { fontSize: 28 },
+                  backgroundColor: "white",
+                  color: "black",
+                  borderRadius: "5px",
+                  margin: 0,
+                }}
+                checked={pets}
+                onChange={(e) => setPets(e.target.checked)}
+              />
+              <FormControlLabel
+                control={<Checkbox />}
+                label="Breakfast"
+                sx={{
+                  "& .MuiSvgIcon-root": { fontSize: 28 },
+                  backgroundColor: "white",
+                  color: "black",
+                  borderRadius: "5px",
+                  margin: 0,
+                }}
+                checked={breakfast}
+                onChange={(e) => setBreakfast(e.target.checked)}
+              />
+            </StyledDiv>
             <StyledTextField
               id="outlined-number"
               placeholder="Rating"
@@ -966,51 +994,54 @@ function Login() {
               value={address}
               onChange={(e) => setAddress(e.target.value)}
             />
-
-            <StyledTextField
-              id="outlined-required"
-              placeholder="City"
-              label="City"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-            />
-            <StyledTextField
-              id="outlined-required"
-              placeholder="Zip-code"
-              label="Zip-code"
-              value={zip}
-              onChange={(e) => setZip(e.target.value)}
-            />
-            <StyledTextField
-              id="outlined-required"
-              placeholder="Country"
-              label="Country"
-              value={country}
-              onChange={(e) => setCountry(e.target.value)}
-            />
-            <StyledTextField
-              id="outlined-required"
-              placeholder="Continent"
-              label="Continent"
-              value={continent}
-              onChange={(e) => setContinent(e.target.value)}
-            />
-
-            <StyledTextField
-              id="outlined-number"
-              placeholder="Latitude"
-              label="Latitude"
-              value={latitude}
-              onChange={(e) => setLatitude(e.target.value)}
-            />
-            <StyledTextField
-              id="outlined-number"
-              placeholder="Longitude"
-              label="Longitude"
-              value={longitude}
-              onChange={(e) => setLongitude(e.target.value)}
-            />
-
+            <StyledDiv style={{ gap: "1rem" }}>
+              <StyledTextField
+                id="outlined-required"
+                placeholder="City"
+                label="City"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+              />
+              <StyledTextField
+                id="outlined-required"
+                placeholder="Zip-code"
+                label="Zip-code"
+                value={zip}
+                onChange={(e) => setZip(e.target.value)}
+              />
+            </StyledDiv>
+            <StyledDiv style={{ gap: "1rem" }}>
+              <StyledTextField
+                id="outlined-required"
+                placeholder="Country"
+                label="Country"
+                value={country}
+                onChange={(e) => setCountry(e.target.value)}
+              />
+              <StyledTextField
+                id="outlined-required"
+                placeholder="Continent"
+                label="Continent"
+                value={continent}
+                onChange={(e) => setContinent(e.target.value)}
+              />
+            </StyledDiv>
+            <StyledDiv style={{ gap: "1rem" }}>
+              <StyledTextField
+                id="outlined-number"
+                placeholder="Latitude"
+                label="Latitude"
+                value={latitude}
+                onChange={(e) => setLatitude(e.target.value)}
+              />
+              <StyledTextField
+                id="outlined-number"
+                placeholder="Longitude"
+                label="Longitude"
+                value={longitude}
+                onChange={(e) => setLongitude(e.target.value)}
+              />
+            </StyledDiv>
             <Button
               variant="contained"
               sx={{ padding: ".5rem 4rem", margin: ".5rem 0 0" }}
@@ -1053,20 +1084,22 @@ function Login() {
               onChange={(e) => setEditDescription(e.target.value)}
             />
 
-            <StyledTextField
-              id="outlined-number"
-              placeholder="Price"
-              label="Price"
-              value={editPrice}
-              onChange={(e) => setEditPrice(e.target.value)}
-            />
-            <StyledTextField
-              id="outlined-number"
-              placeholder="Max. Guests"
-              label="Max. Guests"
-              value={editMaxGuests}
-              onChange={(e) => setEditMaxGuests(e.target.value)}
-            />
+            <StyledDiv style={{ gap: "1rem" }}>
+              <StyledTextField
+                id="outlined-number"
+                placeholder="Price"
+                label="Price"
+                value={editPrice}
+                onChange={(e) => setEditPrice(e.target.value)}
+              />
+              <StyledTextField
+                id="outlined-number"
+                placeholder="Max. Guests"
+                label="Max. Guests"
+                value={editMaxGuests}
+                onChange={(e) => setEditMaxGuests(e.target.value)}
+              />
+            </StyledDiv>
             <StyledTextField
               id="outlined-required"
               placeholder="Image URL"
@@ -1074,58 +1107,62 @@ function Login() {
               value={editImgUrl}
               onChange={(e) => setEditImgUrl(e.target.value)}
             />
-            <FormControlLabel
-              control={<Checkbox />}
-              label="WiFi Included"
-              sx={{
-                "& .MuiSvgIcon-root": { fontSize: 28 },
-                backgroundColor: "white",
-                color: "black",
-                borderRadius: "5px",
-                margin: 0,
-              }}
-              checked={editWifi}
-              onChange={(e) => setEditWifi(e.target.checked)}
-            />
-            <FormControlLabel
-              control={<Checkbox />}
-              label="Parking Included"
-              sx={{
-                "& .MuiSvgIcon-root": { fontSize: 28 },
-                backgroundColor: "white",
-                color: "black",
-                borderRadius: "5px",
-                margin: 0,
-              }}
-              checked={editParking}
-              onChange={(e) => setEditParking(e.target.checked)}
-            />
-            <FormControlLabel
-              control={<Checkbox />}
-              label="Pets Allowed"
-              sx={{
-                "& .MuiSvgIcon-root": { fontSize: 28 },
-                backgroundColor: "white",
-                color: "black",
-                borderRadius: "5px",
-                margin: 0,
-              }}
-              checked={editPets}
-              onChange={(e) => setEditPets(e.target.checked)}
-            />
-            <FormControlLabel
-              control={<Checkbox />}
-              label="Breakfast Included"
-              sx={{
-                "& .MuiSvgIcon-root": { fontSize: 28 },
-                backgroundColor: "white",
-                color: "black",
-                borderRadius: "5px",
-                margin: 0,
-              }}
-              checked={editBreakfast}
-              onChange={(e) => setEditBreakfast(e.target.checked)}
-            />
+            <StyledDiv style={{ gap: "1rem" }}>
+              <FormControlLabel
+                control={<Checkbox />}
+                label="WiFi"
+                sx={{
+                  "& .MuiSvgIcon-root": { fontSize: 28 },
+                  backgroundColor: "white",
+                  color: "black",
+                  borderRadius: "5px",
+                  margin: 0,
+                }}
+                checked={editWifi}
+                onChange={(e) => setEditWifi(e.target.checked)}
+              />
+              <FormControlLabel
+                control={<Checkbox />}
+                label="Parking"
+                sx={{
+                  "& .MuiSvgIcon-root": { fontSize: 28 },
+                  backgroundColor: "white",
+                  color: "black",
+                  borderRadius: "5px",
+                  margin: 0,
+                }}
+                checked={editParking}
+                onChange={(e) => setEditParking(e.target.checked)}
+              />
+            </StyledDiv>
+            <StyledDiv style={{ gap: "1rem" }}>
+              <FormControlLabel
+                control={<Checkbox />}
+                label="Pets Allowed"
+                sx={{
+                  "& .MuiSvgIcon-root": { fontSize: 28 },
+                  backgroundColor: "white",
+                  color: "black",
+                  borderRadius: "5px",
+                  margin: 0,
+                }}
+                checked={editPets}
+                onChange={(e) => setEditPets(e.target.checked)}
+              />
+              <FormControlLabel
+                control={<Checkbox />}
+                label="Breakfast"
+                sx={{
+                  "& .MuiSvgIcon-root": { fontSize: 28 },
+                  backgroundColor: "white",
+                  color: "black",
+                  borderRadius: "5px",
+                  margin: 0,
+                }}
+                checked={editBreakfast}
+                onChange={(e) => setEditBreakfast(e.target.checked)}
+              />
+            </StyledDiv>
             <StyledTextField
               id="outlined-number"
               placeholder="Rating"
@@ -1140,57 +1177,71 @@ function Login() {
               value={editAddress}
               onChange={(e) => setEditAddress(e.target.value)}
             />
-
-            <StyledTextField
-              id="outlined-required"
-              placeholder="City"
-              label="City"
-              value={editCity}
-              onChange={(e) => setEditCity(e.target.value)}
-            />
-            <StyledTextField
-              id="outlined-required"
-              placeholder="Zip-code"
-              label="Zip-code"
-              value={editZip}
-              onChange={(e) => setEditZip(e.target.value)}
-            />
-            <StyledTextField
-              id="outlined-required"
-              placeholder="Country"
-              label="Country"
-              value={editCountry}
-              onChange={(e) => setEditCountry(e.target.value)}
-            />
-            <StyledTextField
-              id="outlined-required"
-              placeholder="Continent"
-              label="Continent"
-              value={editContinent}
-              onChange={(e) => setEditContinent(e.target.value)}
-            />
-
-            <StyledTextField
-              id="outlined-number"
-              placeholder="Latitude"
-              label="Latitude"
-              value={editLatitude}
-              onChange={(e) => setEditLatitude(e.target.value)}
-            />
-            <StyledTextField
-              id="outlined-number"
-              placeholder="Longitude"
-              label="Longitude"
-              value={editLongitude}
-              onChange={(e) => setEditLongitude(e.target.value)}
-            />
-
+            <StyledDiv style={{ gap: "1rem" }}>
+              <StyledTextField
+                id="outlined-required"
+                placeholder="City"
+                label="City"
+                value={editCity}
+                onChange={(e) => setEditCity(e.target.value)}
+              />
+              <StyledTextField
+                id="outlined-required"
+                placeholder="Zip-code"
+                label="Zip-code"
+                value={editZip}
+                onChange={(e) => setEditZip(e.target.value)}
+              />
+            </StyledDiv>
+            <StyledDiv style={{ gap: "1rem" }}>
+              <StyledTextField
+                id="outlined-required"
+                placeholder="Country"
+                label="Country"
+                value={editCountry}
+                onChange={(e) => setEditCountry(e.target.value)}
+              />
+              <StyledTextField
+                id="outlined-required"
+                placeholder="Continent"
+                label="Continent"
+                value={editContinent}
+                onChange={(e) => setEditContinent(e.target.value)}
+              />
+            </StyledDiv>
+            <StyledDiv style={{ gap: "1rem" }}>
+              <StyledTextField
+                id="outlined-number"
+                placeholder="Latitude"
+                label="Latitude"
+                value={editLatitude}
+                onChange={(e) => setEditLatitude(e.target.value)}
+              />
+              <StyledTextField
+                id="outlined-number"
+                placeholder="Longitude"
+                label="Longitude"
+                value={editLongitude}
+                onChange={(e) => setEditLongitude(e.target.value)}
+              />
+            </StyledDiv>
             <Button
               variant="contained"
-              sx={{ padding: ".5rem 4rem", margin: ".5rem 0 0" }}
+              sx={{ padding: ".5rem 4rem", margin: ".0" }}
               onClick={handleEditVenue}
             >
               Edit Venue
+            </Button>
+            <Button
+              variant="contained"
+              sx={{
+                padding: ".5rem 4rem",
+                margin: "0 0 .5rem 0",
+                backgroundColor: "text.secondary",
+              }}
+              onClick={handleClose}
+            >
+              Cancel
             </Button>
           </StyledBookings>
         </StyledModal>
@@ -1202,7 +1253,7 @@ function Login() {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <StyledModal style={{ backgroundColor: "#B2B2B2" }}>
+        <StyledModal>
           <StyledBookings style={{ marginBottom: "2rem" }}>
             {myVenues.map((booking) => (
               <StyledVenueBooking key={booking.id}>

@@ -15,6 +15,7 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import OutlinedInput from "@mui/material/OutlinedInput";
+import PopupMessage from "../../Components/PopupMessage/PopupMessage.jsx";
 
 const API_REGISTER = process.env.REACT_APP_API_REGISTER;
 const API_LOGIN = process.env.REACT_APP_API_LOGIN;
@@ -78,6 +79,17 @@ function Login() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [venueManager, setVenueManager] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
+  const [regNameError, setRegNameError] = useState(false);
+  const [regEmailError, setRegEmailError] = useState(false);
+  const [regPasswordError, setRegPasswordError] = useState(false);
+  const [regConfirmPasswordError, setRegConfirmPasswordError] = useState(false);
+  const [regSuccess, setRegSuccess] = useState(false);
+  const [loginResponse, setLoginResponse] = useState("");
+  const [loginError, setLoginError] = useState(false);
+  const [registerResponse, setRegisterResponse] = useState("");
+  const [registerError, setRegisterError] = useState(false);
   const navigate = useNavigate();
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -111,17 +123,29 @@ function Login() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     // Check if the email matches the allowed pattern
-    if (!emailRegex.test(email.trim())) {
-      // Email is invalid, show an error message or handle it accordingly
-      alert("Invalid email address");
+    if (
+      !emailRegex.test(email.trim()) ||
+      !email.trim().endsWith("stud.noroff.no")
+    ) {
+      setEmailError(true);
+      setTimeout(() => {
+        setEmailError(false);
+      }, 3000);
       return; // Exit early if the email is invalid
+    } else {
+      setEmailError(false);
     }
 
     // Check if the password is at least 8 characters long
     if (password.length < 8) {
-      // Password is too short, show an error message or handle it accordingly
-      alert("Password must be at least 8 characters long");
+      setPasswordError(true);
+      setTimeout(() => {
+        setPasswordError(false);
+      }, 3000);
+
       return; // Exit early if the password is too short
+    } else {
+      setPasswordError(false);
     }
 
     // Perform login logic here if all checks pass
@@ -145,7 +169,12 @@ function Login() {
         console.log(data);
         if (data.errors) {
           // Handle the error response here
-          alert(data.errors[0].message);
+          setLoginError(true);
+          setLoginResponse(data.errors[0].message);
+          setTimeout(() => {
+            setLoginError(false);
+            setLoginResponse("");
+          }, 3000);
           return; // Exit early if there's an error
         } else {
           // Handle the API response here
@@ -188,7 +217,12 @@ function Login() {
                   );
                   if (dataProfile.errors) {
                     // Handle the error response here
-                    alert(dataProfile.errors[0].message);
+                    setLoginError(true);
+                    setLoginResponse(dataProfile.errors[0].message);
+                    setTimeout(() => {
+                      setLoginError(false);
+                      setLoginResponse("");
+                    }, 3000);
                     return; // Exit early if there's an error
                   } else {
                     // Handle the API response here
@@ -220,33 +254,54 @@ function Login() {
 
     // Check if the name matches the allowed pattern
     if (!nameRegex.test(regName)) {
+      setRegNameError(true);
+      setTimeout(() => {
+        setRegNameError(false);
+      }, 3000);
       // name contains invalid characters, show an error message or handle it accordingly
-      alert("Name must not contain symbols apart from underscore (_)");
+
       return; // Exit early if the name is invalid
+    } else {
+      setRegNameError(false);
     }
 
     // Regular expression to match email addresses
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     // Check if the email matches the allowed pattern
-    if (!emailRegex.test(regEmail)) {
-      // Email is invalid, show an error message or handle it accordingly
-      alert("Invalid email address");
+    if (
+      !emailRegex.test(regEmail.trim()) ||
+      !regEmail.trim().endsWith("stud.noroff.no")
+    ) {
+      setRegEmailError(true);
+      setTimeout(() => {
+        setRegEmailError(false);
+      }, 3000);
       return; // Exit early if the email is invalid
+    } else {
+      setRegEmailError(false);
     }
 
     // Check if the password is at least 8 characters long
     if (regPassword.length < 8) {
-      // Password is too short, show an error message or handle it accordingly
-      alert("Password must be at least 8 characters long");
+      setRegPasswordError(true);
+      setTimeout(() => {
+        setRegPasswordError(false);
+      }, 3000);
       return; // Exit early if the password is too short
+    } else {
+      setRegPasswordError(false);
     }
 
     // Check if the password and confirm password match
     if (regPassword !== regConfirmPassword) {
-      // Passwords don't match, show an error message or handle it accordingly
-      alert("Passwords do not match");
+      setRegConfirmPasswordError(true);
+      setTimeout(() => {
+        setRegConfirmPasswordError(false);
+      }, 3000);
       return; // Exit early if the passwords don't match
+    } else {
+      setRegPasswordError(false);
     }
 
     // Perform registration logic here if all checks pass
@@ -273,12 +328,17 @@ function Login() {
         console.log(data);
         if (data.errors) {
           // Handle the error response here
-          alert(data.errors[0].message);
+          setRegisterError(true);
+          setRegisterResponse(data.errors[0].message);
+          setTimeout(() => {
+            setRegisterError(false);
+            setRegisterResponse("");
+          }, 3000);
           return; // Exit early if there's an error
         } else {
           setShowLogin(true);
           setShowRegister(false); // Ensure only the clicked one is active
-          alert("User registered successfully, please log in");
+          setRegSuccess(true);
         }
       })
       .catch((error) => {
@@ -308,16 +368,55 @@ function Login() {
         autoComplete="off"
       >
         <StyledDiv2>
+          {emailError && (
+            <PopupMessage message="Email must end with @stud.noroff.no" /> // Pass onClose prop to handle popup close
+          )}{" "}
           <StyledTextField
             required
+            error={emailError}
             id="outlined-required"
-            placeholder="Email"
+            placeholder="Email@stud.noroff.no"
+            label="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            InputLabelProps={{
+              style: {
+                color: "black",
+                backgroundColor: "#F5F5F5",
+                height: "fit-content",
+                width: "fit-content",
+                borderRadius: "5px",
+                padding: "0.2rem .7rem",
+                margin: "-0.2rem 0 0 -.3rem",
+                boxShadow: "0 2.5px 5px 0 rgba(0,0,0,0.2)",
+                opacity: ".8",
+              },
+            }}
           />
-
-          <FormControl sx={{ m: 1, width: "25ch" }} variant="outlined">
-            <InputLabel htmlFor="outlined-adornment-password" required>
+          {passwordError && (
+            <PopupMessage message="Password must be at least 8 characters long" /> // Pass onClose prop to handle popup close
+          )}{" "}
+          <FormControl
+            error={passwordError}
+            sx={{ m: 1, width: "25ch" }}
+            variant="outlined"
+          >
+            <InputLabel
+              style={{
+                color: "black",
+                backgroundColor: "#F5F5F5",
+                height: "fit-content",
+                width: "fit-content",
+                borderRadius: "5px",
+                padding: "0.2rem .7rem",
+                marginTop: "-0.2rem",
+                boxShadow: "0 2.5px 5px 0 rgba(0,0,0,0.2)",
+                margin: "-0.2rem 0 0 -.3rem",
+                opacity: ".8",
+              }}
+              htmlFor="outlined-adornment-password"
+              required
+            >
               Password
             </InputLabel>
             <StyledOutlinedInput
@@ -340,7 +439,9 @@ function Login() {
               }
             />
           </FormControl>
-
+          {loginError && (
+            <PopupMessage message={loginResponse} /> // Pass onClose prop to handle popup close
+          )}{" "}
           <Button
             variant="contained"
             sx={{ padding: ".5rem 4rem", margin: ".5rem 0 0", width: "220px" }}
@@ -360,25 +461,80 @@ function Login() {
         autoComplete="off"
       >
         <StyledDiv2>
+          {regNameError && (
+            <PopupMessage message="Name must not contain symbols apart from underscore (_)" /> // Pass onClose prop to handle popup close
+          )}{" "}
           <StyledTextField
             required
+            error={regNameError}
             id="outlined-required"
             placeholder="Name"
             label="Name"
             value={regName}
             onChange={(e) => setRegName(e.target.value)}
+            InputLabelProps={{
+              style: {
+                color: "black",
+                backgroundColor: "#F5F5F5",
+                height: "fit-content",
+                width: "fit-content",
+                borderRadius: "5px",
+                padding: "0.2rem .7rem",
+                margin: "-0.2rem 0 0 -.3rem",
+                boxShadow: "0 2.5px 5px 0 rgba(0,0,0,0.2)",
+                opacity: ".8",
+              },
+            }}
           />
+          {regEmailError && (
+            <PopupMessage message="Email must end with @stud.noroff.no" /> // Pass onClose prop to handle popup close
+          )}{" "}
           <StyledTextField
             required
+            error={regEmailError}
             id="outlined-required"
             placeholder="Email@stud.noroff.no"
             label="Email"
             value={regEmail}
             onChange={(e) => setRegEmail(e.target.value)}
+            InputLabelProps={{
+              style: {
+                color: "black",
+                backgroundColor: "#F5F5F5",
+                height: "fit-content",
+                width: "fit-content",
+                borderRadius: "5px",
+                padding: "0.2rem .7rem",
+                margin: "-0.2rem 0 0 -.3rem",
+                boxShadow: "0 2.5px 5px 0 rgba(0,0,0,0.2)",
+                opacity: ".8",
+              },
+            }}
           />
-
-          <FormControl sx={{ m: 1, width: "25ch" }} variant="outlined">
-            <InputLabel htmlFor="outlined-adornment-password" required>
+          {regPasswordError && (
+            <PopupMessage message="Password must be at least 8 characters long" /> // Pass onClose prop to handle popup close
+          )}{" "}
+          <FormControl
+            error={regPasswordError}
+            sx={{ m: 1, width: "25ch" }}
+            variant="outlined"
+          >
+            <InputLabel
+              style={{
+                color: "black",
+                backgroundColor: "#F5F5F5",
+                height: "fit-content",
+                width: "fit-content",
+                borderRadius: "5px",
+                padding: "0.2rem .7rem",
+                marginTop: "-0.2rem",
+                boxShadow: "0 2.5px 5px 0 rgba(0,0,0,0.2)",
+                margin: "-0.2rem 0 0 -.3rem",
+                opacity: ".8",
+              }}
+              htmlFor="outlined-adornment-password"
+              required
+            >
               Password
             </InputLabel>
             <StyledOutlinedInput
@@ -401,9 +557,30 @@ function Login() {
               }
             />
           </FormControl>
-
-          <FormControl sx={{ m: 1, width: "25ch" }} variant="outlined">
-            <InputLabel htmlFor="outlined-adornment-password" required>
+          {regConfirmPasswordError && (
+            <PopupMessage message="Passwords does not match" /> // Pass onClose prop to handle popup close
+          )}{" "}
+          <FormControl
+            error={regConfirmPasswordError}
+            sx={{ m: 1, width: "25ch" }}
+            variant="outlined"
+          >
+            <InputLabel
+              style={{
+                color: "black",
+                backgroundColor: "#F5F5F5",
+                height: "fit-content",
+                width: "fit-content",
+                borderRadius: "5px",
+                padding: "0.2rem .7rem",
+                marginTop: "-0.2rem",
+                boxShadow: "0 2.5px 5px 0 rgba(0,0,0,0.2)",
+                margin: "-0.2rem 0 0 -.3rem",
+                opacity: ".8",
+              }}
+              htmlFor="outlined-adornment-password"
+              required
+            >
               Password
             </InputLabel>
             <StyledOutlinedInput
@@ -426,7 +603,6 @@ function Login() {
               }
             />
           </FormControl>
-
           <StyledDiv3>
             <Checkbox
               color="primary"
@@ -468,6 +644,12 @@ function Login() {
               </Popover>
             </div>
           </StyledDiv3>
+          {regSuccess && (
+            <PopupMessage message="Registration successful! Please log in" /> // Pass onClose prop to handle popup close
+          )}{" "}
+          {registerError && (
+            <PopupMessage message={registerResponse} /> // Pass onClose prop to handle popup close
+          )}{" "}
           <Button
             variant="contained"
             sx={{ padding: ".5rem 4rem", margin: ".5rem 0 0", width: "220px" }}

@@ -196,6 +196,7 @@ function Product() {
   const [productInfo, setProductInfo] = useState(null);
   const isImage = product.media[0].url !== null || product.media[0].url !== "";
   const [imageLoaded, setImageLoaded] = useState(false);
+
   ScrollToTop();
 
   const capitalizeFirstLetter = (str) => {

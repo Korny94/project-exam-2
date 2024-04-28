@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 import Fab from "@mui/material/Fab";
 import Modal from "@mui/material/Modal";
 
+import PopupMessage from "../PopupMessage/PopupMessage.jsx";
+
 import dayjs from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -63,6 +65,8 @@ function AddToCart({ product }) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [bookingError, setBookingError] = React.useState("");
+  const [showBookingError, setShowBookingError] = React.useState(false);
 
   const [guests, setGuests] = React.useState(1);
 
@@ -73,22 +77,32 @@ function AddToCart({ product }) {
   const key = JSON.parse(localStorage.getItem("key"));
   const user = JSON.parse(localStorage.getItem("user"));
 
+  const handleBookingError = (errorMessage) => {
+    setBookingError(errorMessage);
+    setShowBookingError(true);
+    setTimeout(() => {
+      setShowBookingError(false);
+      setBookingError("");
+    }, 3000);
+  };
+
   const handleBooking = () => {
     if (
       localStorage.getItem("user") === null ||
       user.accessToken === null ||
       user.accessToken === ""
     ) {
-      alert("Please log in to book a venue.");
-      navigate("/login");
+      handleBookingError("Please log in to book a venue.");
     } else if (fromValue === null) {
-      alert("Please select a 'from' date.");
+      handleBookingError("Please select a 'from' date.");
     } else if (toValue === null) {
-      alert("Please select a 'to' date.");
+      handleBookingError("Please select a 'to' date.");
     } else if (fromValue.isAfter(toValue)) {
-      alert("The 'from' date must be before the 'to' date.");
+      handleBookingError("The 'from' date must be before the 'to' date.");
     } else if (fromValue.isSame(toValue, "day")) {
-      alert("The 'from' date cannot be the same as the 'to' date.");
+      handleBookingError(
+        "The 'from' date cannot be the same as the 'to' date."
+      );
     } else {
       // Check if any dates between fromValue and toValue are disabled or highlighted
       const datesInRange = [];
@@ -116,15 +130,15 @@ function AddToCart({ product }) {
         // Iterate over ISO string dates
         if (bookedDatesSet.has(isoDateString)) {
           conflictFound = true;
-          // If a conflicting date is found, you can handle it here
-          // For example, you can display an alert message or log it
           console.log(`Conflict found on date: ${isoDateString}`);
         }
       });
 
       // If conflictFound is true, there are conflicting dates; otherwise, there are none
       if (conflictFound) {
-        alert("Some dates between 'from' and 'to' are already booked.");
+        handleBookingError(
+          "Some dates between 'from' and 'to' are already booked."
+        );
         // Optionally, you can return or handle further execution of the booking process
         return;
       }
@@ -156,7 +170,7 @@ function AddToCart({ product }) {
         .then((data) => {
           console.log("Booking created:", data);
           if (data.errors) {
-            alert(data.errors[0].message);
+            handleBookingError(data.errors[0].message);
           } else {
             product.bookings.push(data.data);
 
@@ -385,7 +399,6 @@ function AddToCart({ product }) {
               }}
             />
           </LocalizationProvider>
-
           <FormControl fullWidth sx={{ marginBottom: "1.5rem" }}>
             <InputLabel id="demo-simple-select-label">Guests</InputLabel>
             <Select
@@ -403,7 +416,9 @@ function AddToCart({ product }) {
               ))}
             </Select>
           </FormControl>
-
+          {showBookingError && (
+            <PopupMessage message={bookingError} /> // Pass onClose prop to handle popup close
+          )}{" "}
           <Fab
             variant="extended"
             size="medium"
