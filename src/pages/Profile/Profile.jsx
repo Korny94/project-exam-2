@@ -106,6 +106,7 @@ const StyledBookingsDiv = styled.div`
   overflow-x: hidden;
   padding: 1rem;
   align-items: center;
+  margin: 0 auto;
 `;
 
 const StyledBookings = styled.div`
