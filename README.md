@@ -1,3 +1,14 @@
+# WaterBnB
+Welcome to WaterBnB, your go-to platform for booking and hosting holiday venues. Whether you're planning your next vacation or looking to earn extra income from your property, WaterBnB has you covered.
+
+## Installation
+
+Install dependencies
+
+```bash
+npm install
+```
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
