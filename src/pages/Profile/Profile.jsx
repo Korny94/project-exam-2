@@ -1,7 +1,9 @@
+import Logout from "../../Components/Logout/Logout.jsx";
+import ProfileImgClick from "../../Components/ProfileImgClick/ProfileImgClick.jsx";
+
 import React, { useState, useEffect } from "react";
-import styled from "styled-components";
-import noProfileImg from "../../assets/noProfileImg.png";
 import editBtn from "../../assets/editBtn.png";
+import styled from "styled-components";
 import { Fab } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
@@ -16,9 +18,7 @@ import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import Popover from "@mui/material/Popover";
 import Typography from "@mui/material/Typography";
 
-import logOut from "../../assets/logOut.png";
 import { useNavigate } from "react-router-dom";
-import Loader from "../../Components/Loader/Loader";
 
 const ALL_PROFILES = process.env.REACT_APP_API_ALL_PROFILES;
 const ALL_VENUES = process.env.REACT_APP_API_ALL_VENUES;
@@ -32,55 +32,19 @@ const StyledDiv = styled.div`
 const StyledModal = styled.div`
   width: 80vw;
   max-width: 400px;
-  background-color: white;
   margin: 1rem auto;
   border-radius: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 1rem;
-`;
-
-const StyledImgDiv = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  cursor: pointer;
-  margin: 2rem auto;
-  width: 50vw;
-  max-width: 250px;
-`;
-
-const StyledImg = styled.img`
-  width: 200px;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 50%;
-  box-shadow: 0px 0px 20px 2px #1f4c65;
-`;
-
-const StyledEditBtn = styled.img`
-  position: absolute;
-  width: 20px;
-  margin-top: 10em;
-  margin-left: 12rem;
-  opacity: 0.5;
+  background-color: rgba(217, 217, 217, 0.1);
 `;
 
 const StyledH2 = styled.h2`
   text-align: center;
   font-size: 1.5rem;
   color: white;
-`;
-
-const StyledLogoutBtn = styled.img`
-  width: 30px;
-  position: fixed;
-  right: 1rem;
-  bottom: 1rem;
-  cursor: pointer;
 `;
 
 const StyledBtnsDiv = styled.div`
@@ -114,7 +78,7 @@ const StyledBookings = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  width: 100vw;
+  width: 100%;
   align-items: center;
   padding: 1rem 0;
 `;
@@ -179,20 +143,17 @@ const StyledVenueBooking = styled.div`
   gap: 1rem;
   justify-content: space-between;
   background-color: #212121;
+  color: white;
 `;
 
 function Login() {
   const [showMyBookings, setShowMyBookings] = useState(false);
   const [showMyVenues, setShowMyVenues] = useState(false);
   const [showNewVenue, setShowNewVenue] = useState(false);
-  const [venueManager, setVenueManager] = useState(false);
-  const [anchorEl, setAnchorEl] = React.useState(null);
   const Navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
   const user = JSON.parse(localStorage.getItem("user"));
   const key = JSON.parse(localStorage.getItem("key"));
-  const isImage = user.avatar.url !== null || user.avatar.url !== "";
-  const [imageLoaded, setImageLoaded] = useState(false);
+
   const [bookings, setBookings] = useState([]);
   const [venues, setVenues] = useState([]);
   const [venueName, setVenueName] = useState("");
@@ -212,13 +173,18 @@ function Login() {
   const [breakfast, setBreakfast] = useState(false);
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
-  const open = Boolean(anchorEl);
-  const [openOne, setOpenOne] = React.useState(false);
-  const handleOpen = () => setOpenOne(true);
-  const handleClose = () => setOpenOne(false);
+
   const [openTwo, setOpenTwo] = React.useState(false);
   const handleOpenTwo = () => setOpenTwo(true);
   const handleCloseTwo = () => setOpenTwo(false);
+
+  const [myVenues, setMyVenues] = useState([]);
+  const [popupMessage, setPopupMessage] = useState("");
+  const [showPopupMessage, setShowPopupMessage] = useState(false);
+
+  const [openOne, setOpenOne] = React.useState(false);
+  const handleOpen = () => setOpenOne(true);
+  const handleClose = () => setOpenOne(false);
   const [editAddress, setEditAddress] = useState("");
   const [editCity, setEditCity] = useState("");
   const [editZip, setEditZip] = useState("");
@@ -237,9 +203,10 @@ function Login() {
   const [editLongitude, setEditLongitude] = useState("");
   const [editVenueName, setEditVenueName] = useState("");
   const [venueId, setVenueId] = useState("");
-  const [myVenues, setMyVenues] = useState([]);
-  const [popupMessage, setPopupMessage] = useState("");
-  const [showPopupMessage, setShowPopupMessage] = useState(false);
+
+  const [venueManager, setVenueManager] = useState(false);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
 
   useEffect(() => {
     const profile = JSON.parse(localStorage.getItem("profile"));
@@ -255,14 +222,6 @@ function Login() {
     const newValue = event.target.checked;
     setVenueManager(newValue);
     handleVenueManager(newValue); // Call the function to update the profile
-  };
-
-  const handlePopupMessages = (message) => {
-    setPopupMessage(message);
-    setShowPopupMessage(true);
-    setTimeout(() => {
-      setShowPopupMessage(false);
-    }, 3000);
   };
 
   const handleVenueManager = (newValue) => {
@@ -302,27 +261,86 @@ function Login() {
     setAnchorEl(null);
   };
 
-  const handleCreateVenue = () => {
-    console.log(
-      venueName,
-      description,
-      price,
-      maxGuests,
-      wifi,
-      parking,
-      pets,
-      breakfast,
-      rating,
-      address,
-      city,
-      zip,
-      country,
-      continent,
-      latitude,
-      longitude,
-      imgUrl
-    );
+  const handleEditVenue = () => {
+    fetch(`${ALL_VENUES}${venueId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${user.accessToken}`,
+        "X-Noroff-API-Key": key.key,
+      },
 
+      body: JSON.stringify({
+        name: editVenueName,
+        description: editDescription,
+        media: [
+          {
+            url:
+              editImgUrl ||
+              "https://cdn.pixabay.com/photo/2017/11/10/04/47/image-2935360_1280.png",
+            alt: "Venue Image",
+          },
+        ],
+        price: parseFloat(editPrice) || 0,
+        maxGuests: parseInt(editMaxGuests) || 1,
+        rating: parseFloat(editRating) || 0,
+        meta: {
+          wifi: editWifi,
+          parking: editParking,
+          pets: editPets,
+          breakfast: editBreakfast,
+        },
+        location: {
+          address: editAddress,
+          city: editCity,
+          zip: editZip,
+          country: editCountry,
+          continent: editContinent,
+          lat: parseFloat(editLatitude) || 0,
+          lng: parseFloat(editLongitude) || 0,
+        },
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.errors) {
+          handlePopupMessages(data.errors[0].message);
+        } else {
+          handlePopupMessages("Venue edited successfully!");
+          setAddress("");
+          setCity("");
+          setZip("");
+          setCountry("");
+          setContinent("");
+          setImgUrl("");
+          setDescription("");
+          setPrice("");
+          setMaxGuests("");
+          setRating("");
+          setWifi(false);
+          setParking(false);
+          setPets(false);
+          setBreakfast(false);
+          setLatitude("");
+          setLongitude("");
+          setVenueName("");
+          setOpenOne(false);
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
+        }
+      });
+  };
+
+  const handlePopupMessages = (message) => {
+    setPopupMessage(message);
+    setShowPopupMessage(true);
+    setTimeout(() => {
+      setShowPopupMessage(false);
+    }, 3000);
+  };
+
+  const handleCreateVenue = () => {
     if (!venueName || !description || !price || !maxGuests) {
       handlePopupMessages("Please fill in all required fields.");
       return;
@@ -369,13 +387,11 @@ function Login() {
       .then((res) => res.json())
       .then((data) => {
         if (data.errors) {
-          console.log(data.errors);
           handlePopupMessages(data.errors[0].message);
         } else {
           handlePopupMessages("Venue created successfully!");
           setShowNewVenue(false);
 
-          console.log(data.data);
           setAddress("");
           setCity("");
           setZip("");
@@ -397,51 +413,8 @@ function Login() {
       });
   };
 
-  const handleProfileImgClick = () => {
-    const userInput = window.prompt("Please enter image url:");
-    if (userInput !== "" && userInput !== null && userInput !== "null") {
-      fetch(`${ALL_PROFILES}${user.name}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${user.accessToken}`,
-          "X-Noroff-API-Key": key.key,
-        },
-        body: JSON.stringify({
-          avatar: {
-            url: userInput,
-            alt: "Profile Image",
-          },
-        }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.errors) {
-            handlePopupMessages(data.errors[0].message);
-          } else {
-            // Update the avatar URL property with userInput
-            user.avatar.url = userInput;
-
-            // Store the updated user object back in local storage
-            localStorage.setItem("user", JSON.stringify(user));
-            window.location.reload();
-          }
-        });
-    }
-  };
-
   const capitalizeFirstLetter = (str) => {
     return str.charAt(0).toUpperCase() + str.slice(1);
-  };
-
-  const handleLogout = () => {
-    setLoading(true);
-    setTimeout(() => {
-      localStorage.removeItem("user");
-      localStorage.removeItem("key");
-      localStorage.removeItem("profile");
-      Navigate("/");
-    }, 500);
   };
 
   const handleMyBookings = () => {
@@ -459,10 +432,8 @@ function Login() {
       .then((res) => res.json())
       .then((data) => {
         if (data.errors) {
-          console.log(data.errors);
           handlePopupMessages(data.errors[0].message);
         } else {
-          console.log(data.data.bookings);
           const fetchedBookings = data.data.bookings.sort((a, b) => {
             const dateA = new Date(a.dateFrom);
             const dateB = new Date(b.dateFrom);
@@ -474,7 +445,9 @@ function Login() {
   };
 
   const handleMyVenues = () => {
-    if (venueManager) {
+    const profile = JSON.parse(localStorage.getItem("profile"));
+
+    if (profile.venueManager) {
       setShowMyBookings(false);
       setShowMyVenues(true);
       setShowNewVenue(false);
@@ -504,7 +477,9 @@ function Login() {
   };
 
   const handleNewVenue = () => {
-    if (venueManager) {
+    const profile = JSON.parse(localStorage.getItem("profile"));
+
+    if (profile.venueManager) {
       setShowMyBookings(false);
       setShowMyVenues(false);
       setShowNewVenue(true);
@@ -519,7 +494,6 @@ function Login() {
   };
 
   const fetchVenue = (bookingId) => {
-    console.log(`${ALL_VENUES}${bookingId}?_bookings=true`);
     fetch(`${ALL_VENUES}${bookingId}?_bookings=true`, {
       method: "GET",
       headers: {
@@ -532,7 +506,6 @@ function Login() {
         if (data.errors) {
           handlePopupMessages(data.errors[0].message);
         } else {
-          console.log(data.data);
           localStorage.setItem("productInfo", JSON.stringify(data.data));
           localStorage.setItem("product", JSON.stringify(data.data));
 
@@ -557,8 +530,6 @@ function Login() {
   }
 
   const handleDeleteVenue = (venueId) => {
-    console.log("Delete venue", venueId);
-
     fetch(`${ALL_VENUES}${venueId}`, {
       method: "DELETE",
       headers: {
@@ -590,7 +561,6 @@ function Login() {
           error instanceof SyntaxError ||
           error.message === "Network response was not ok"
         ) {
-          console.error("Error deleting venue:", error);
           handlePopupMessages(
             "An error occurred while deleting the venue. Please try again later."
           );
@@ -623,100 +593,6 @@ function Login() {
     setEditImgUrl(venue.media[0].url);
   };
 
-  const handleEditVenue = () => {
-    console.log(
-      editAddress,
-      editCity,
-      editZip,
-      editCountry,
-      editContinent,
-      editImgUrl,
-      editDescription,
-      editPrice,
-      editMaxGuests,
-      editRating,
-      editWifi,
-      editParking,
-      editPets,
-      editBreakfast,
-      editLatitude,
-      editLongitude,
-      editVenueName,
-      venueId
-    );
-
-    fetch(`${ALL_VENUES}${venueId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${user.accessToken}`,
-        "X-Noroff-API-Key": key.key,
-      },
-
-      body: JSON.stringify({
-        name: editVenueName,
-        description: editDescription,
-        media: [
-          {
-            url:
-              editImgUrl ||
-              "https://cdn.pixabay.com/photo/2017/11/10/04/47/image-2935360_1280.png",
-            alt: "Venue Image",
-          },
-        ],
-        price: parseFloat(editPrice) || 0,
-        maxGuests: parseInt(editMaxGuests) || 1,
-        rating: parseFloat(editRating) || 0,
-        meta: {
-          wifi: editWifi,
-          parking: editParking,
-          pets: editPets,
-          breakfast: editBreakfast,
-        },
-        location: {
-          address: editAddress,
-          city: editCity,
-          zip: editZip,
-          country: editCountry,
-          continent: editContinent,
-          lat: parseFloat(editLatitude) || 0,
-          lng: parseFloat(editLongitude) || 0,
-        },
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.errors) {
-          console.log(data.errors);
-          handlePopupMessages(data.errors[0].message);
-        } else {
-          handlePopupMessages("Venue edited successfully!");
-          console.log(data.data);
-          setAddress("");
-          setCity("");
-          setZip("");
-          setCountry("");
-          setContinent("");
-          setImgUrl("");
-          setDescription("");
-          setPrice("");
-          setMaxGuests("");
-          setRating("");
-          setWifi(false);
-          setParking(false);
-          setPets(false);
-          setBreakfast(false);
-          setLatitude("");
-          setLongitude("");
-          setVenueName("");
-          setOpenOne(false);
-          setTimeout(() => {
-            window.location.reload();
-          }, 1000);
-        }
-      });
-  };
-
   const handleBookingsIconClick = (venue) => {
     handleOpenTwo();
 
@@ -726,31 +602,12 @@ function Login() {
       return dateA - dateB;
     });
     setMyVenues(fetchedBookings);
-    console.log(myVenues);
   };
 
   return (
     <>
       {showPopupMessage && <PopupMessage message={popupMessage} />}
-      <StyledImgDiv onClick={handleProfileImgClick}>
-        {isImage && (
-          <StyledImg
-            src={user.avatar.url}
-            alt="Product"
-            onLoad={() => setImageLoaded(true)}
-            onError={() => setImageLoaded(false)}
-            style={{ display: imageLoaded ? "inline" : "none" }}
-          />
-        )}
-        {!imageLoaded && (
-          <StyledImg
-            src={noProfileImg}
-            alt="Default Image"
-            style={{ display: imageLoaded ? "none" : "inline" }}
-          />
-        )}
-        <StyledEditBtn src={editBtn} alt="Edit" />
-      </StyledImgDiv>
+      <ProfileImgClick />
       <StyledH2>{capitalizeFirstLetter(user.name)}</StyledH2>
       <StyledDiv>
         <Checkbox
@@ -1242,20 +1099,15 @@ function Login() {
           </StyledBookings>
         )}
       </StyledBookingsDiv>
-      <StyledLogoutBtn
-        onClick={handleLogout}
-        src={logOut}
-        alt="Log Out"
-        title="Log out"
-      />
+      <Logout />
       <Modal
-        style={{ overflow: "scroll", margin: "5rem auto" }}
+        style={{ overflowY: "auto", overflowX: "hidden", margin: "5rem auto" }}
         open={openOne}
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <StyledModal>
+        <StyledModal style={{ backgroundColor: "white" }}>
           <StyledBookings>
             <StyledTextField
               id="outlined-required"
@@ -1297,7 +1149,7 @@ function Login() {
               value={editImgUrl}
               onChange={(e) => setEditImgUrl(e.target.value)}
             />
-            <StyledDiv style={{ gap: "1rem" }}>
+            <StyledDiv style={{ gap: "1rem", width: "100%" }}>
               <FormControlLabel
                 control={<Checkbox />}
                 label="WiFi"
@@ -1310,6 +1162,7 @@ function Login() {
                 }}
                 checked={editWifi}
                 onChange={(e) => setEditWifi(e.target.checked)}
+                title="WiFi Included"
               />
               <FormControlLabel
                 control={<Checkbox />}
@@ -1323,22 +1176,10 @@ function Login() {
                 }}
                 checked={editParking}
                 onChange={(e) => setEditParking(e.target.checked)}
+                title="Parking Included"
               />
             </StyledDiv>
-            <StyledDiv style={{ gap: "1rem" }}>
-              <FormControlLabel
-                control={<Checkbox />}
-                label="Pets Allowed"
-                sx={{
-                  "& .MuiSvgIcon-root": { fontSize: 28 },
-                  backgroundColor: "white",
-                  color: "black",
-                  borderRadius: "5px",
-                  margin: 0,
-                }}
-                checked={editPets}
-                onChange={(e) => setEditPets(e.target.checked)}
-              />
+            <StyledDiv style={{ gap: "1rem", width: "100%" }}>
               <FormControlLabel
                 control={<Checkbox />}
                 label="Breakfast"
@@ -1351,6 +1192,21 @@ function Login() {
                 }}
                 checked={editBreakfast}
                 onChange={(e) => setEditBreakfast(e.target.checked)}
+                title="Breakfast Included"
+              />
+              <FormControlLabel
+                control={<Checkbox />}
+                label="Pets"
+                sx={{
+                  "& .MuiSvgIcon-root": { fontSize: 28 },
+                  backgroundColor: "white",
+                  color: "black",
+                  borderRadius: "5px",
+                  margin: 0,
+                }}
+                checked={editPets}
+                onChange={(e) => setEditPets(e.target.checked)}
+                title="Pets Allowed"
               />
             </StyledDiv>
             <StyledTextField
@@ -1437,7 +1293,7 @@ function Login() {
         </StyledModal>
       </Modal>
       <Modal
-        style={{ overflow: "scroll", margin: "5rem auto" }}
+        style={{ overflowY: "auto", overflowX: "hidden", margin: "5rem auto" }}
         open={openTwo}
         onClose={handleCloseTwo}
         aria-labelledby="modal-modal-title"

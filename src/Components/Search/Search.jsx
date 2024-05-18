@@ -48,13 +48,9 @@ function Search() {
       .then((data) => {
         setProducts(data.data);
         setFilteredSuggestions(data.data); // Initialize filteredSuggestions with all products
-        for (let i = 0; i < data.data.length; i++) {
-          console.log(data.data[i].media[0]);
-        }
-        console.log(data.data);
+        for (let i = 0; i < data.data.length; i++) {}
       })
       .catch((error) => {
-        console.error("Error fetching products:", error);
         setFetchError(true);
       });
   }, []);

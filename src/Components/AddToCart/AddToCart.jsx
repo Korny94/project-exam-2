@@ -21,7 +21,6 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 
 const ALL_BOOKINGS = process.env.REACT_APP_API_ALL_BOOKINGS;
-console.log(ALL_BOOKINGS);
 
 function ServerDay(props) {
   const { highlightedDays = [], day, outsideCurrentMonth, ...other } = props;
@@ -117,8 +116,6 @@ function AddToCart({ product }) {
         currentDate = currentDate.add(1, "day");
       }
 
-      console.log("Dates in range:", datesInRange);
-
       // Convert allBookedDates to a Set for faster lookup
       const bookedDatesSet = new Set(allBookedDates);
 
@@ -130,7 +127,6 @@ function AddToCart({ product }) {
         // Iterate over ISO string dates
         if (bookedDatesSet.has(isoDateString)) {
           conflictFound = true;
-          console.log(`Conflict found on date: ${isoDateString}`);
         }
       });
 
@@ -151,8 +147,6 @@ function AddToCart({ product }) {
         venueId: product.id, // Required - The id of the venue to book
       };
 
-      console.log("New booking:", newBooking);
-
       // Send a POST request to the API to create a new booking
       fetch(ALL_BOOKINGS, {
         method: "POST",
@@ -168,7 +162,6 @@ function AddToCart({ product }) {
         })
 
         .then((data) => {
-          console.log("Booking created:", data);
           if (data.errors) {
             handleBookingError(data.errors[0].message);
           } else {
@@ -180,9 +173,7 @@ function AddToCart({ product }) {
           }
         })
 
-        .catch((error) => {
-          console.error("Error creating booking:", error);
-        });
+        .catch((error) => {});
     }
   };
 
@@ -228,8 +219,6 @@ function AddToCart({ product }) {
     const bookingDates = getAllDatesBetween(booking.dateFrom, booking.dateTo);
     return dates.concat(bookingDates);
   }, []);
-
-  console.log("All booked dates:", allBookedDates);
 
   const [fromValue, setFromValue] = React.useState(null);
   const [toValue, setToValue] = React.useState(null);
@@ -290,7 +279,6 @@ function AddToCart({ product }) {
 
     setHighlightedDays(daysToHighlight);
     setIsLoading(false);
-    console.log("Highlighted days:", daysToHighlight);
 
     requestAbortController.current = controller;
   };
