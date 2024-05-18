@@ -106,7 +106,6 @@ function ProductCard({ product }) {
   const [imageLoaded, setImageLoaded] = useState(false);
 
   const getProductInfo = (product) => {
-    console.log(product);
     // Remove the time portion from dateFrom and dateTo in each booking
     const cleanBookings = product.bookings.map((booking) => ({
       // Adjust the UTC time to local time before truncating the time portion

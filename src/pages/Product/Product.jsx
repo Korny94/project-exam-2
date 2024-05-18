@@ -204,7 +204,7 @@ function Product() {
   };
 
   const checkNullOrEmpty = (str) => {
-    return str !== "" && str != null;
+    return str !== "" && str != null && str !== undefined && str !== "null";
   };
 
   useEffect(() => {
@@ -339,7 +339,7 @@ function Product() {
               </p>
               <p>
                 <strong>Continent: </strong>
-                {checkNullOrEmpty(productInfo.location.country) &&
+                {checkNullOrEmpty(productInfo.location.continent) &&
                   capitalizeFirstLetter(
                     productInfo.location.continent.toLowerCase()
                   )}

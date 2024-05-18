@@ -1,7 +1,9 @@
 .popupMessage {
+  text-align: center;
+  width: 70vw;
+  max-width: 90vw;
   position: fixed;
   font-size: 1.25rem;
-  text-wrap: nowrap;
   font-weight: 900;
   top: 2rem;
   left: 50%;
