@@ -48,6 +48,6 @@ npm run start
 
 ## Contact
 
-[My Portfolio page](www.karlmagnusnokling.no)
+[My Portfolio page](https://karlmagnusnokling.no)
 
 
