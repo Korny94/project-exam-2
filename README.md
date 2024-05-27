@@ -1,4 +1,4 @@
-# WaterBnB
+# Project-Exam-2
 
 ![image](https://github.com/Korny94/project-exam-2/blob/main/src/assets/pe2Overview.png)
 
